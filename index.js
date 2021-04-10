@@ -39,7 +39,7 @@ prompt.get(["path", "creditDebit"], (err, result) => {
     let outArray = [];
 
     for (let i = 0; i < transactions.length; i++) {
-        let entriesFound = known.find((entry) => {
+        let entriesFound = known.filter((entry) => {
             for (let j = 0; j < entry.key.length; j++) {
                 if (transactions[i].desc.includes(entry.key[j])) return true;
             }
@@ -47,14 +47,14 @@ prompt.get(["path", "creditDebit"], (err, result) => {
         });
 
         if (entriesFound) {
-            if (Array.isArray(entriesFound)) {
+            if (entriesFound.length > 1) {
                 console.log(
                     `error: multiple matches found\ndesc: ${
-                        transaction[i].desc
+                        transactions[i].desc
                     }\nkey entries: ${JSON.stringify(entriesFound)}`
                 );
             }
-            let outElem = { ...entriesFound };
+            let outElem = { ...entriesFound[0] };
             outElem.key = undefined;
             outElem["Date"] = transactions[i].date;
             outElem["Amount"] = Math.abs(transactions[i].amount);
