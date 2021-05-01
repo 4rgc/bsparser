@@ -1,6 +1,6 @@
 const { RawTransaction } = require("./Transactions");
 
-class TransactionParser {
+class TransactionCSVParser {
     static parseTransactionCSV(csvData) {
         let ret = [];
         let lines = csvData.split("\n");
@@ -17,4 +17,4 @@ class TransactionParser {
         return ret;
     }
 }
-exports.TransactionParser = TransactionParser;
+exports.TransactionCSVParser = TransactionCSVParser;
