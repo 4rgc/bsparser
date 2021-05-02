@@ -14,7 +14,7 @@ class MeaningfulTransaction {
     initFromRawTransaction(rawTransaction, pattern) {
         this["Date"] = rawTransaction.date;
         this["Main Cat."] = pattern["Main Cat."];
-        this["Sub Cat."] = pattern["Sub Cat"];
+        this["Sub Cat."] = pattern["Sub Cat."];
         this["Contents"] = pattern["Contents"];
         this["Amount"] = Math.abs(rawTransaction.amount);
         this["Inc./Exp."] = pattern["Inc./Exp."];

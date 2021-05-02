@@ -1,6 +1,3 @@
-//TODO: FOR TESTING PURPOSES
-const process = require("process");
-//--------------------------
 const fs = require("fs");
 const prompt = require("prompt");
 const { MeaningfulTransaction } = require("./Transactions");
@@ -34,6 +31,8 @@ class App {
             let outTxt = this.buildTsvFile(meaningfulTransactions);
 
             fs.writeFile("out.tsv", outTxt, () => {});
+
+            this.patterns.savePatterns();
         });
     }
 
@@ -92,16 +91,16 @@ class App {
                 this.transactions[i]
             );
 
-            console.log("before");
-
             if (matchingPatterns.length == 0) {
-                console.log("0 patterns");
                 let newPattern = await this.processPatternOrSkipTransaction(
                     this.transactions[i]
                 );
+                if (newPattern) {
+                    this.patterns.addPattern(newPattern);
+                }
+                i--;
+                continue;
             }
-
-            console.log("after");
 
             if (matchingPatterns.length > 1) {
                 throw new Error(
@@ -144,13 +143,13 @@ class App {
 
     removeTransactionsBefore(dateBefore) {
         this.transactions = this.transactions.filter((transaction) => {
-            let transationDate = moment(transaction.date, [
+            let transactionDate = moment(transaction.date, [
                 "M/D/YYYY",
                 "MM/D/YYYY",
                 "M/DD/YYYY",
                 "MM/DD/YYYY",
             ]);
-            return transationDate.isAfter(moment(dateBefore, "DD/MM/YYYY"));
+            return transactionDate.isAfter(moment(dateBefore, "DD/MM/YYYY"));
         });
     }
 
@@ -171,47 +170,69 @@ class App {
     }
 
     processNewPattern(transaction) {
-        let key;
-        let description;
-
         return this.promptPatternKey(transaction)
-            .then((result) => {
-                key = result;
-                return this.createOrAppendToPattern();
+            .then((key) => {
+                return this.createOrAppendToPattern(key);
             })
             .then((res) => {
-                description = res;
-
-                console.log(`key: ${key} description: ${description}`);
-                process.exit(1);
+                return res;
             });
     }
 
-    createOrAppendToPattern() {
+    createOrAppendToPattern(key) {
         return this.promptCreateOrAppendToPattern().then((result) => {
             if (result.choice == 1) {
-                return this.createNewPattern();
+                return this.createNewPattern(key);
+            } else if (result.choice == 2) {
+                return this.appendToPattern(key);
+            } else {
+                throw new Error("invalid choice (exp. 1/2)");
             }
         });
     }
 
     promptCreateOrAppendToPattern() {
-        console.log("ok here 3");
         let msg = `Would you like to create a new pattern or append it to an existing one? \
-                    1 - Create \
-                    2 - Append`;
+                    \n\t1 - Create \
+                    \n\t2 - Append`;
         return this.promptMultipleChoice(msg, 2);
     }
 
-    createNewPattern() {
-        //TODO: change return value to initialized pattern object
-        return this.promptNewPatternDescription();
+    createNewPattern(key) {
+        let description;
+        let category;
+        let subcategory;
+        let incomeExpense;
+        return this.promptNewPatternDescription()
+            .then((res) => {
+                description = res;
+            })
+            .then(() => this.promptCategoryChoice())
+            .then((res) => {
+                category = res;
+            })
+            .then(() => this.promptSubcategoryChoice(category))
+            .then((res) => (subcategory = res))
+            .then(() => this.promptIncomeOrExpense())
+            .then((res) => (incomeExpense = res))
+            .then(() => {
+                let pattern = {
+                    key: [key],
+                    Contents: description,
+                    "Main Cat.": category.category,
+                    "Sub Cat.": subcategory,
+                    "Inc./Exp.": incomeExpense,
+                };
+                if (!subcategory) {
+                    delete pattern["Sub Cat."];
+                }
+                return pattern;
+            });
     }
 
     promptNewPatternDescription() {
-        let msg = `Enter description for the new pattern: `;
+        let msg = "Enter description for the new pattern: ";
         let descriptions = this.patterns.getAllContents();
-        //let categories = this.patterns.getAllCategories();
 
         let wrongInputMsg =
             "This description is already in use. Please try again.";
@@ -221,15 +242,137 @@ class App {
         return this.promptConformingText(msg, conformCondition, wrongInputMsg);
     }
 
+    promptCategoryChoice() {
+        let msg = "Choose a category for the new pattern: \n";
+        let categories = this.patterns.getAllCategories();
+        categories.push({ category: "Make new" });
+        let categoriesStr = "";
+        for (let i = 0; i < categories.length; i++) {
+            categoriesStr += i + 1 + " – " + categories[i].category + "\t";
+            if ((i + 1) % 5 == 0) categoriesStr += "\n";
+        }
+
+        return this.promptMultipleChoice(
+            msg + categoriesStr,
+            categories.length
+        ).then((res) => {
+            if (res.choice == categories.length) {
+                return this.promptNewCategory(categories);
+            } else if (res.choice > categories.length) {
+                throw new Error(
+                    `invalid choice (exp. 1-${categories.length + 1}`
+                );
+            }
+            return categories[res.choice - 1];
+        });
+    }
+
+    promptNewCategory(categories) {
+        let msg = "Enter the name of the new category:";
+
+        let conformCondition = (input) => !categories.includes(input);
+
+        let wrongInputMsg =
+            "This subcategory already exists. Please try again.";
+
+        return this.promptConformingText(
+            msg,
+            conformCondition,
+            wrongInputMsg
+        ).then((res) => {
+            return { category: res };
+        });
+    }
+
+    promptSubcategoryChoice(category) {
+        let msg = "Choose a subcategory for the new pattern: \n";
+        let foundCategory = this.patterns
+            .getAllCategories()
+            .find((c) => JSON.stringify(c) === JSON.stringify(category));
+        let subcategories = foundCategory ? foundCategory.subcategories : [];
+        subcategories.push("Make new");
+        subcategories.push("None");
+        let subcategoriesStr = "";
+        for (let i = 0; i < subcategories.length; i++) {
+            subcategoriesStr += i + 1 + " – " + subcategories[i] + "\t";
+            if ((i + 1) % 5 == 0) subcategoriesStr += "\n";
+        }
+
+        return this.promptMultipleChoice(
+            msg + subcategoriesStr,
+            subcategories.length
+        ).then((res) => {
+            if (res.choice == subcategories.length - 1) {
+                return this.promptNewSubcategory(subcategories);
+            } else if (res.choice == subcategories.length) {
+                return undefined;
+            } else if (res.choice > subcategories.length) {
+                throw new Error(
+                    `invalid choice (exp. 1-${subcategories.length + 1}`
+                );
+            }
+            return subcategories[res.choice - 1];
+        });
+    }
+
+    promptNewSubcategory(subcategories) {
+        let msg = "Enter the name of the new subcategory:";
+
+        let conformCondition = (input) => !subcategories.includes(input);
+
+        let wrongInputMsg =
+            "This subcategory already exists. Please try again.";
+
+        return this.promptConformingText(msg, conformCondition, wrongInputMsg);
+    }
+
+    promptIncomeOrExpense() {
+        let msg = `Is the transaction with this pattern an income or an expanse? \
+                \n\t1 – Income \
+                \n\t2 – Expense`;
+
+        return this.promptMultipleChoice(msg, 2).then((res) => {
+            if (res.choice == 1) return "収入";
+            else if (res.choice == 2) return "支出";
+            else throw new Error("invalid choice (exp. 1/2)");
+        });
+    }
+
+    appendToPattern(key) {
+        return this.promptAppendPatternChoice().then((res) => {
+            this.patterns.appendKeyToPattern(key, res);
+        });
+    }
+
+    promptAppendPatternChoice() {
+        let descriptions = this.patterns.getAllContents();
+
+        let msg = "Choose which pattern you want to append the key to:\n";
+        let descriptionsStr = "";
+        for (let i = 0; i < descriptions.length; i++) {
+            descriptionsStr += i + 1 + " – " + descriptions[i] + "\t";
+            if ((i + 1) % 5 == 0) descriptionsStr += "\n";
+        }
+
+        return this.promptMultipleChoice(
+            msg + descriptionsStr,
+            descriptions.length
+        ).then((res) => {
+            if (res.choice > descriptions.length)
+                throw new Error(
+                    `invalid choice (exp. 1-${descriptions.length}`
+                );
+            return descriptions[res.choice - 1];
+        });
+    }
+
     promptPatternKey(transaction) {
-        let keys = this.patterns.getAllKeys();
         let msg = `Enter the key of the following transaction text: \
                     \n\t${transaction.desc}`;
 
-        let conformCondition = (input) =>
-            transaction.desc.includes(input) || !keys.includes(input);
+        let conformCondition = (input) => transaction.desc.includes(input);
 
-        let wrongInputMsg = `This description is not a part of the transaction or is already in use. Please try again. \
+        let wrongInputMsg = `This description is not a part of the transaction. Please try again. \
                     \n\t${transaction.desc}`;
         return this.promptConformingText(msg, conformCondition, wrongInputMsg);
     }
@@ -242,7 +385,12 @@ class App {
             var schema = {
                 properties: {
                     choice: {
-                        pattern: new RegExp("^[1-" + choiceNumber + "]$"),
+                        conform: (input) =>
+                            Number.isInteger(
+                                Number(input == "" ? undefined : input)
+                            ) &&
+                            input > 0 &&
+                            input <= choiceNumber,
                         message: "Please enter a valid choice",
                         required: true,
                     },

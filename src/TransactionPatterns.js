@@ -21,6 +21,11 @@ class TransactionPatterns {
         );
     }
 
+    //TODO: add check for pattern existing
+    addPattern(pattern) {
+        this.#patterns.push(pattern);
+    }
+
     findMatchingPatterns(tra) {
         let matchingPatterns = this.#patterns.filter((pattern) => {
             for (let j = 0; j < pattern.key.length; j++) {
@@ -45,14 +50,10 @@ class TransactionPatterns {
 
     getAllCategories() {
         let categories = [
-            ...new Set(
-                this.#patterns.map((pattern) => {
-                    return {
-                        category: pattern["Main Cat."],
-                    };
-                })
-            ),
-        ];
+            ...new Set(this.#patterns.map((pattern) => pattern["Main Cat."])),
+        ].map((pattern) => {
+            return { category: pattern };
+        });
         for (let i = 0; i < categories.length; i++) {
             categories[i].subcategories = [
                 ...new Set(
@@ -63,12 +64,21 @@ class TransactionPatterns {
                     )
                 ),
             ];
+            // remove null subcategories (from objects with no subcategory)
             categories[i].subcategories.splice(
                 categories[i].subcategories.indexOf(null),
                 1
             );
+            categories[i].subcategories.splice(
+                categories[i].subcategories.indexOf(undefined),
+                1
+            );
         }
         return categories;
+    }
+
+    appendKeyToPattern(key, desc) {
+        this.#patterns.find((p) => p["Contents"] == desc)["key"].push(key);
     }
 }
 exports.TransactionPatterns = TransactionPatterns;
