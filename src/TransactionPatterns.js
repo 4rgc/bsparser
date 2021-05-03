@@ -60,6 +60,8 @@ class TransactionPatterns {
                     this.#patterns.map((pattern) =>
                         pattern["Main Cat."] === categories[i].category
                             ? pattern["Sub Cat."]
+                                ? pattern["Sub Cat."]
+                                : null
                             : null
                     )
                 ),
@@ -67,10 +69,6 @@ class TransactionPatterns {
             // remove null subcategories (from objects with no subcategory)
             categories[i].subcategories.splice(
                 categories[i].subcategories.indexOf(null),
-                1
-            );
-            categories[i].subcategories.splice(
-                categories[i].subcategories.indexOf(undefined),
                 1
             );
         }

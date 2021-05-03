@@ -39,22 +39,23 @@ class App {
     propmtUser() {
         return new Promise((resolve, reject) => {
             prompt.start();
-            console.log(
-                "Please specify a path to the statement file and the account: "
-            );
 
             var schema = {
                 properties: {
                     path: {
+                        description: "Please specify the path to the statement",
                         pattern: /^[\/]?([^/ ]*[\/])*([^/ ]+)$/,
                         message: "Must be a valid path to a file",
                         required: true,
                     },
                     creditDebit: {
+                        description: "\t...credit (1) or debit (2) account",
                         message: "1-credit, 2-debit",
                         required: true,
                     },
                     dateBefore: {
+                        description:
+                            "\t...discard transactions before this date",
                         pattern: /((0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/[12]\d{3})/,
                         message:
                             "The date must be in the following format: dd/mm/yyyy",
@@ -149,16 +150,20 @@ class App {
                 "M/DD/YYYY",
                 "MM/DD/YYYY",
             ]);
-            return transactionDate.isAfter(moment(dateBefore, "DD/MM/YYYY"));
+            return transactionDate.isAfter(
+                moment(dateBefore, "DD/MM/YYYY").subtract(1, "day")
+            );
         });
     }
 
     processPatternOrSkipTransaction(transaction) {
-        return this.promptProcessPatternOrSkipTransaction().then((result) => {
-            if (result.choice == 1) return this.processNewPattern(transaction);
-            else if (result.choice == 2) return;
-            else reject();
-        });
+        return this.promptProcessPatternOrSkipTransaction().then(
+            ({ choice }) => {
+                if (choice == 1) return this.processNewPattern(transaction);
+                else if (choice == 2) return;
+                else reject();
+            }
+        );
     }
 
     promptProcessPatternOrSkipTransaction() {
@@ -170,13 +175,9 @@ class App {
     }
 
     processNewPattern(transaction) {
-        return this.promptPatternKey(transaction)
-            .then((key) => {
-                return this.createOrAppendToPattern(key);
-            })
-            .then((res) => {
-                return res;
-            });
+        return this.promptPatternKey(transaction).then((key) => {
+            return this.createOrAppendToPattern(key);
+        });
     }
 
     createOrAppendToPattern(key) {
@@ -203,7 +204,7 @@ class App {
         let category;
         let subcategory;
         let incomeExpense;
-        return this.promptNewPatternDescription()
+        return this.promptDescription()
             .then((res) => {
                 description = res;
             })
@@ -230,7 +231,7 @@ class App {
             });
     }
 
-    promptNewPatternDescription() {
+    promptDescription() {
         let msg = "Enter description for the new pattern: ";
         let descriptions = this.patterns.getAllContents();
 
@@ -255,15 +256,15 @@ class App {
         return this.promptMultipleChoice(
             msg + categoriesStr,
             categories.length
-        ).then((res) => {
-            if (res.choice == categories.length) {
+        ).then(({ choice }) => {
+            if (choice == categories.length) {
                 return this.promptNewCategory(categories);
-            } else if (res.choice > categories.length) {
+            } else if (choice > categories.length) {
                 throw new Error(
                     `invalid choice (exp. 1-${categories.length + 1}`
                 );
             }
-            return categories[res.choice - 1];
+            return categories[choice - 1];
         });
     }
 
@@ -272,15 +273,14 @@ class App {
 
         let conformCondition = (input) => !categories.includes(input);
 
-        let wrongInputMsg =
-            "This subcategory already exists. Please try again.";
+        let wrongInputMsg = "This category already exists. Please try again.";
 
         return this.promptConformingText(
             msg,
             conformCondition,
             wrongInputMsg
-        ).then((res) => {
-            return { category: res };
+        ).then((category) => {
+            return { category };
         });
     }
 
@@ -301,17 +301,17 @@ class App {
         return this.promptMultipleChoice(
             msg + subcategoriesStr,
             subcategories.length
-        ).then((res) => {
-            if (res.choice == subcategories.length - 1) {
+        ).then(({ choice }) => {
+            if (choice == subcategories.length - 1) {
                 return this.promptNewSubcategory(subcategories);
-            } else if (res.choice == subcategories.length) {
+            } else if (choice == subcategories.length) {
                 return undefined;
-            } else if (res.choice > subcategories.length) {
+            } else if (choice > subcategories.length) {
                 throw new Error(
-                    `invalid choice (exp. 1-${subcategories.length + 1}`
+                    `invalid choice (exp. 1-${subcategories.length}`
                 );
             }
-            return subcategories[res.choice - 1];
+            return subcategories[choice - 1];
         });
     }
 
@@ -327,20 +327,20 @@ class App {
     }
 
     promptIncomeOrExpense() {
-        let msg = `Is the transaction with this pattern an income or an expanse? \
+        let msg = `Is the transaction with this pattern an income or an expense? \
                 \n\t1 – Income \
                 \n\t2 – Expense`;
 
-        return this.promptMultipleChoice(msg, 2).then((res) => {
-            if (res.choice == 1) return "収入";
-            else if (res.choice == 2) return "支出";
+        return this.promptMultipleChoice(msg, 2).then(({ choice }) => {
+            if (choice == 1) return "収入";
+            else if (choice == 2) return "支出";
             else throw new Error("invalid choice (exp. 1/2)");
         });
     }
 
     appendToPattern(key) {
-        return this.promptAppendPatternChoice().then((res) => {
-            this.patterns.appendKeyToPattern(key, res);
+        return this.promptAppendPatternChoice().then((description) => {
+            this.patterns.appendKeyToPattern(key, description);
         });
     }
 
@@ -357,12 +357,12 @@ class App {
         return this.promptMultipleChoice(
             msg + descriptionsStr,
             descriptions.length
-        ).then((res) => {
-            if (res.choice > descriptions.length)
+        ).then(({ choice }) => {
+            if (choice > descriptions.length)
                 throw new Error(
                     `invalid choice (exp. 1-${descriptions.length}`
                 );
-            return descriptions[res.choice - 1];
+            return descriptions[choice - 1];
         });
     }
 
