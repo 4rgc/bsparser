@@ -1,17 +1,26 @@
-class RawTransaction {
-    constructor({ date, desc, amount }) {
-        this.date = date;
-        this.desc = desc;
-        this.amount = amount;
-    }
+import {Pattern} from "./util";
+
+export type RawTransaction = {
+    date: string;
+    desc: string;
+    amount: number;
 }
 
-class MeaningfulTransaction {
-    constructor(account) {
+export class MeaningfulTransaction {
+    "Date": string;
+    "Account": string;
+    "Main Cat.": string;
+    "Sub Cat.": string | undefined;
+    "Contents": string;
+    "Amount": number;
+    "Inc./Exp.": string;
+    "Details": string | undefined;
+
+    constructor(account: string) {
         this["Account"] = account;
     }
 
-    initFromRawTransaction(rawTransaction, pattern) {
+    initFromRawTransaction(rawTransaction: RawTransaction, pattern: Pattern) {
         this["Date"] = rawTransaction.date;
         this["Main Cat."] = pattern["Main Cat."];
         this["Sub Cat."] = pattern["Sub Cat."];
@@ -39,5 +48,17 @@ class MeaningfulTransaction {
     }
 }
 
-exports.RawTransaction = RawTransaction;
-exports.MeaningfulTransaction = MeaningfulTransaction;
+export const parseTransactionCSV = (csvData: string) => {
+    let ret: RawTransaction[] = new Array<RawTransaction>();
+    let lines = csvData.split("\n");
+    for (let i = 0; i < lines.length - 1; i++) {
+        let lineElements = lines[i].split(",");
+        let newTransaction: RawTransaction = {
+                date: lineElements[0],
+                desc: lineElements[1].substr(1, lineElements[1].length - 2),
+                amount: Number.parseFloat(lineElements[2]),
+        }
+        ret.push(newTransaction);
+    }
+    return ret;
+}

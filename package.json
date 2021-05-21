@@ -4,6 +4,9 @@
   "description": "Bank statement parser.",
   "main": "index.js",
   "scripts": {
+    "dev": "tsc -w",
+    "compile": "tsc",
+    "start": "node ./dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +24,12 @@
     "moment": "^2.29.1",
     "prompt": "^1.1.0",
     "xlsx": "^0.16.9"
+  },
+  "devDependencies": {
+    "@types/node": "^15.3.1",
+    "@types/prompt": "^1.1.0",
+    "@typescript-eslint/eslint-plugin": "^4.24.0",
+    "@typescript-eslint/parser": "^4.24.0",
+    "eslint": "^7.26.0"
   }
 }
