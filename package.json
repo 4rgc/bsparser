@@ -4,7 +4,7 @@
   "description": "Bank statement parser.",
   "main": "index.js",
   "scripts": {
-    "test": "jest ./test"
+    "test": "jest ./test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/4rgc/bsparser#readme",
   "dependencies": {
+    "@types/jest": "^26.0.23",
     "jszip": "^3.6.0",
     "moment": "^2.29.1",
     "prompt": "^1.1.0",
