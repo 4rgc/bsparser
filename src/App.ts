@@ -208,18 +208,11 @@ class App {
     }
 
     async createNewPattern(key: Pattern["key"][0]) {
-        let description: Pattern["Contents"];
-        let category: Category;
-        let subcategory: Pattern["Sub Cat."];
-        let incomeExpense: Pattern["Inc./Exp."];
-        const res = await this.promptDescription();
-        description = res;
-        const res_1 = await this.promptCategoryChoice();
-        category = res_1;
-        const res_2 = await this.promptSubcategoryChoice(category);
-        (subcategory = res_2);
-        const res_3 = await this.promptIncomeOrExpense();
-        (incomeExpense = res_3);
+        let description = await this.promptDescription();
+        let category = await this.promptCategoryChoice();
+        let subcategory =  await this.promptSubcategoryChoice(category);
+        let incomeExpense = await this.promptIncomeOrExpense();
+        
         let pattern: Pattern = {
             key: [key],
             Contents: description,
