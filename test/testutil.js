@@ -13,7 +13,7 @@ const testPattern = {
 
 const testRawTransaction = new RawTransaction({
     date: "01/01/1970",
-    desc: "A description",
+    desc: "test #51234 OK LMAO XDDDDDD",
     amount: 10,
 });
 
@@ -37,9 +37,33 @@ const tsvTransactionOrder = [
     "Details",
 ];
 
+const testPatterns = [
+    {
+        key: ["test", "TST"],
+        Contents: "Test",
+        "Main Cat.": "testcat",
+        "Sub Cat.": "subcat",
+        "Inc./Exp.": "支出",
+    },
+    {
+        key: ["t1", "T1"],
+        Contents: "Test1",
+        "Main Cat.": "testcat",
+        "Inc./Exp.": "支出",
+    },
+    {
+        key: ["tset", "TSET"],
+        Contents: "Test3",
+        "Main Cat.": "testcat1",
+        "Sub Cat.": "subcat",
+        "Inc./Exp.": "支出",
+    },
+];
+
 module.exports = {
     testPattern,
     testRawTransaction,
     testMeaningfulTransaction,
     tsvTransactionOrder,
+    testPatterns,
 };

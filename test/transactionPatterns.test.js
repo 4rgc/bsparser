@@ -1,6 +1,7 @@
 import { TransactionPatterns } from "../src/TransactionPatterns";
 import { readFileAsText } from "../src/util";
 import { writeFile } from "fs";
+import { testPatterns } from "./testutil";
 
 jest.mock("../src/util");
 jest.mock("fs");
@@ -78,6 +79,25 @@ describe("TransactionPatterns", () => {
             const prevPatterns = [...patterns.patterns];
             patterns.addPattern(newPattern);
             expect(patterns.patterns).toEqual([...prevPatterns, newPattern]);
+        });
+    });
+
+    describe("findMatchingPatterns()", () => {
+        let patterns;
+        beforeEach(() => {
+            patterns = new TransactionPatterns("path");
+            patterns.patterns = testPatterns;
+        });
+
+        test("should return a pattern object", () => {
+            const testPattern = testPatterns[0];
+            const testTransaction = {
+                date: "01/01/1970",
+                desc: `${testPattern.key[0]} #$AS654D1C OK LMAOOOOO`,
+                amount: 50,
+            };
+            const foundPattern = patterns.findMatchingPatterns(testTransaction);
+            expect(foundPattern).toEqual([testPattern]);
         });
     });
 });
