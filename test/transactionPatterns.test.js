@@ -6,7 +6,7 @@ jest.mock("../src/util");
 jest.mock("fs");
 
 describe("TransactionPatterns", () => {
-    describe("loadPatterns", () => {
+    describe("loadPatterns()", () => {
         let path;
         let patterns;
         beforeAll(() => {
@@ -38,7 +38,7 @@ describe("TransactionPatterns", () => {
         });
     });
 
-    describe("savePatterns", () => {
+    describe("savePatterns()", () => {
         let path;
         let patterns;
         beforeAll(() => {
@@ -65,6 +65,19 @@ describe("TransactionPatterns", () => {
             expect(writeFile.mock.calls[0][1]).toBe(
                 JSON.stringify(patterns.patterns)
             );
+        });
+    });
+
+    describe("addPattern()", () => {
+        let patterns;
+        beforeEach(() => {
+            patterns = new TransactionPatterns("path");
+        });
+        test("should add the pattern to the inside array", () => {
+            const newPattern = { name: "a", lmao: "b" };
+            const prevPatterns = [...patterns.patterns];
+            patterns.addPattern(newPattern);
+            expect(patterns.patterns).toEqual([...prevPatterns, newPattern]);
         });
     });
 });
