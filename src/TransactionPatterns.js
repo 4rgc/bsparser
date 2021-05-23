@@ -2,32 +2,28 @@ const fs = require("fs");
 const { readFileAsText } = require("./util");
 
 class TransactionPatterns {
-    #patterns;
-    #diskRelPath;
-    constructor() {
-        this.#patterns = [];
-        this.#diskRelPath = "patterns.json";
+    patterns;
+    diskRelPath;
+    constructor(path) {
+        this.patterns = [];
+        this.diskRelPath = path || "patterns.json";
     }
 
     loadPatterns() {
-        this.#patterns = JSON.parse(readFileAsText("patterns.json"));
+        this.patterns = JSON.parse(readFileAsText(this.diskRelPath));
     }
 
     async savePatterns() {
-        fs.writeFile(
-            this.#diskRelPath,
-            JSON.stringify(this.#patterns),
-            () => {}
-        );
+        fs.writeFile(this.diskRelPath, JSON.stringify(this.patterns), () => {});
     }
 
     //TODO: add check for pattern existing
     addPattern(pattern) {
-        this.#patterns.push(pattern);
+        this.patterns.push(pattern);
     }
 
     findMatchingPatterns(tra) {
-        let matchingPatterns = this.#patterns.filter((pattern) => {
+        let matchingPatterns = this.patterns.filter((pattern) => {
             for (let j = 0; j < pattern.key.length; j++) {
                 if (tra.desc.includes(pattern.key[j])) return true;
             }
@@ -38,26 +34,26 @@ class TransactionPatterns {
 
     getAllKeys() {
         let s = new Set();
-        for (let i = 0; i < this.#patterns.length; i++) {
-            s = new Set([...s, ...this.#patterns[i].key]);
+        for (let i = 0; i < this.patterns.length; i++) {
+            s = new Set([...s, ...this.patterns[i].key]);
         }
         return [...s];
     }
 
     getAllContents() {
-        return this.#patterns.map((pattern) => pattern["Contents"]);
+        return this.patterns.map((pattern) => pattern["Contents"]);
     }
 
     getAllCategories() {
         let categories = [
-            ...new Set(this.#patterns.map((pattern) => pattern["Main Cat."])),
+            ...new Set(this.patterns.map((pattern) => pattern["Main Cat."])),
         ].map((pattern) => {
             return { category: pattern };
         });
         for (let i = 0; i < categories.length; i++) {
             categories[i].subcategories = [
                 ...new Set(
-                    this.#patterns.map((pattern) =>
+                    this.patterns.map((pattern) =>
                         pattern["Main Cat."] === categories[i].category
                             ? pattern["Sub Cat."]
                                 ? pattern["Sub Cat."]
@@ -76,7 +72,8 @@ class TransactionPatterns {
     }
 
     appendKeyToPattern(key, desc) {
-        this.#patterns.find((p) => p["Contents"] == desc)["key"].push(key);
+        this.patterns.find((p) => p["Contents"] == desc)["key"].push(key);
     }
 }
-exports.TransactionPatterns = TransactionPatterns;
+
+module.exports.TransactionPatterns = TransactionPatterns;
