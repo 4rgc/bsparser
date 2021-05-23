@@ -4,7 +4,8 @@
   "description": "Bank statement parser.",
   "main": "index.js",
   "scripts": {
-    "test": "jest ./test/*.test.js --watchAll"
+    "test": "jest ./test/*.test.js",
+    "test dev": "jest ./test/*.test.js --watchAll"
   },
   "repository": {
     "type": "git",
