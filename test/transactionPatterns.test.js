@@ -2,6 +2,7 @@ import { TransactionPatterns } from "../src/TransactionPatterns";
 import { readFileAsText } from "../src/util";
 import { writeFile } from "fs";
 import { testPatterns } from "./testutil";
+import equal from "deep-equal";
 
 jest.mock("../src/util");
 jest.mock("fs");
@@ -138,6 +139,58 @@ describe("TransactionPatterns", () => {
             });
 
             expect(patternBank.getAllContents()).toEqual(contents);
+        });
+    });
+
+    describe("getAllCategories()", () => {
+        let patternBank;
+        const isACategoryObj = (obj) => {
+            const categoryObj = {
+                category: "",
+                subcategories: [],
+            };
+            let result = true;
+            Object.keys(categoryObj).forEach((k) => {
+                if (!obj.hasOwnProperty(k)) result = false;
+            });
+            return result;
+        };
+        const deepContains = (arr, obj) =>
+            arr.filter((el) => equal(el, obj)).length > 0;
+
+        beforeEach(() => {
+            patternBank = new TransactionPatterns("path");
+            patternBank.patterns = testPatterns;
+        });
+
+        test("should return an array", () => {
+            expect(patternBank.getAllCategories()).toBeInstanceOf(Array);
+        });
+        test("should only contain category objects", () => {
+            expect(patternBank.getAllCategories()).toSatisfyAll(isACategoryObj);
+        });
+        test("should contain unique objects", () => {
+            let categories = patternBank.getAllCategories();
+            expect(categories).toSatisfyAll((el) =>
+                deepContains(categories, el)
+            );
+        });
+        test("should return objects with valid categories", () => {
+            expect(patternBank.getAllCategories()).toSatisfyAll((el) =>
+                patternBank.patterns.find((p) => p["Main Cat."] === el.category)
+            );
+        });
+        test("should return objects with valid subcategories", () => {
+            expect(patternBank.getAllCategories()).toSatisfyAll((el) => {
+                let result = true;
+                el.subcategories.forEach((sub) => {
+                    if (
+                        !patternBank.patterns.find((p) => p["Sub Cat."] === sub)
+                    )
+                        result = false;
+                });
+                return result;
+            });
         });
     });
 });
