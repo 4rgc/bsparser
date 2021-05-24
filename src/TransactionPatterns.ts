@@ -8,32 +8,32 @@ export type Category = {
 }
 
 export class TransactionPatterns {
-    #patterns: Pattern[];
-    #diskRelPath: string;
-    constructor() {
-        this.#patterns = [];
-        this.#diskRelPath = "patterns.json";
+    patterns: Pattern[];
+    diskRelPath: string;
+    constructor(path: string) {
+        this.patterns = [];
+        this.diskRelPath = path || "patterns.json";
     }
 
     loadPatterns() {
-        this.#patterns = JSON.parse(readFileAsText("patterns.json"));
+        this.patterns = JSON.parse(readFileAsText(this.diskRelPath));
     }
 
     async savePatterns() {
         fs.writeFile(
-            this.#diskRelPath,
-            JSON.stringify(this.#patterns),
+            this.diskRelPath,
+            JSON.stringify(this.patterns),
             () => {}
         );
     }
 
     //TODO: add check for pattern existing
     addPattern(pattern: Pattern) {
-        this.#patterns.push(pattern);
+        this.patterns.push(pattern);
     }
 
     findMatchingPatterns(tra: RawTransaction) {
-        return this.#patterns.filter((pattern) => {
+        return this.patterns.filter((pattern) => {
             for (const patternKey of pattern.key) {
                 if (tra.desc.includes(patternKey)) return true;
             }
@@ -43,26 +43,26 @@ export class TransactionPatterns {
 
     getAllKeys() {
         let s = new Set();
-        for (const pattern of this.#patterns) {
+        for (const pattern of this.patterns) {
             s = new Set([...s, ...pattern.key]);
         }
         return [...s];
     }
 
     getAllContents() {
-        return this.#patterns.map((pattern) => pattern["Contents"]);
+        return this.patterns.map((pattern) => pattern["Contents"]);
     }
 
     getAllCategories() {
         let categories: Category[] = [
-            ...new Set(this.#patterns.map((pattern) => pattern["Main Cat."])),
+            ...new Set(this.patterns.map((pattern) => pattern["Main Cat."])),
         ].map((c) => {
             return { category: c, subcategories: [] };
         });
         for (let category of categories) {
             let subcategories = [
                 ...new Set(
-                    this.#patterns.map((pattern) =>
+                    this.patterns.map((pattern) =>
                         {
                             const subcategory = pattern["Sub Cat."]
                                     ? pattern["Sub Cat."]
@@ -81,9 +81,9 @@ export class TransactionPatterns {
     }
 
     appendKeyToPattern(key: Pattern["key"][0], desc: string) {
-        const foundPattern = this.#patterns.find((p) => p["Contents"] == desc);
+        const foundPattern = this.patterns.find((p) => p["Contents"] == desc);
         if(foundPattern)
-            ["key"].push(key);
+            foundPattern["key"].push(key);
         else
             throw new Error("Not found a pattern to push a key in");
     }

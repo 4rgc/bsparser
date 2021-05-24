@@ -1,4 +1,4 @@
-const { MeaningfulTransaction } = require("../src/Transactions");
+import { MeaningfulTransaction } from "../src/Transactions";
 const {
     testPattern,
     testRawTransaction,
@@ -29,7 +29,8 @@ describe("MeaningfulTransaction", () => {
         const splitTsvMt = tsvMt.split("\t");
 
         for (let i = 0; i < tsvTransactionOrder.length; i++) {
-            expect(splitTsvMt[i]).toBe(mt[tsvTransactionOrder[i]]);
+            let prop = mt[tsvTransactionOrder[i]];
+            expect(splitTsvMt[i]).toBe(prop.toString());
         }
     });
 });

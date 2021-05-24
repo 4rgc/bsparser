@@ -1,7 +1,7 @@
-const {
+import {
     RawTransaction,
     MeaningfulTransaction,
-} = require("../src/Transactions");
+} from "../src/Transactions";
 
 const testPattern = {
     key: ["A", "B"],
@@ -11,14 +11,14 @@ const testPattern = {
     "Inc./Exp.": "Exp",
 };
 
-const testRawTransaction = new RawTransaction({
+const testRawTransaction: RawTransaction = {
     date: "01/01/1970",
     desc: "test #51234 OK LMAO XDDDDDD",
     amount: 10,
-});
+};
 
 const testMeaningfulTransaction = new MeaningfulTransaction("credit");
-testMeaningfulTransaction.Amount = "10";
+testMeaningfulTransaction.Amount = 10;
 testMeaningfulTransaction.Contents = "description";
 testMeaningfulTransaction.Date = "01/01/1970";
 testMeaningfulTransaction.Details = "";
@@ -60,7 +60,7 @@ const testPatterns = [
     },
 ];
 
-module.exports = {
+export {
     testPattern,
     testRawTransaction,
     testMeaningfulTransaction,
