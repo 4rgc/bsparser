@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest ./test/*.test.js",
     "test-w": "jest ./test/*.test.js --watchAll",
-    "coverage": "jest coverage"
+    "coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
