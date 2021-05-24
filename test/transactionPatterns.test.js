@@ -9,7 +9,7 @@ jest.mock("fs");
 describe("TransactionPatterns", () => {
     describe("loadPatterns()", () => {
         let path;
-        let patterns;
+        let patternBank;
         beforeAll(() => {
             readFileAsText.mockImplementation(
                 jest.fn((p) => `file contents at ${p}`)
@@ -22,8 +22,8 @@ describe("TransactionPatterns", () => {
         });
         beforeEach(() => {
             path = "path";
-            patterns = new TransactionPatterns(path);
-            patterns.loadPatterns();
+            patternBank = new TransactionPatterns(path);
+            patternBank.loadPatterns();
         });
         afterEach(() => {
             jest.clearAllMocks();
@@ -41,18 +41,18 @@ describe("TransactionPatterns", () => {
 
     describe("savePatterns()", () => {
         let path;
-        let patterns;
+        let patternBank;
         beforeAll(() => {
             writeFile.mockImplementation(jest.fn());
         });
         beforeEach(() => {
             path = "path";
-            patterns = new TransactionPatterns(path);
-            patterns.patterns = {
+            patternBank = new TransactionPatterns(path);
+            patternBank.patterns = {
                 path,
                 prop2: 1,
             };
-            patterns.savePatterns();
+            patternBank.savePatterns();
         });
         afterEach(() => {
             jest.clearAllMocks();
@@ -62,31 +62,31 @@ describe("TransactionPatterns", () => {
         });
         test("should call fs.writeFile with the stringified patterns", () => {
             expect(writeFile).toBeCalledTimes(1);
-            expect(writeFile.mock.calls[0][0]).toBe(patterns.diskRelPath);
+            expect(writeFile.mock.calls[0][0]).toBe(patternBank.diskRelPath);
             expect(writeFile.mock.calls[0][1]).toBe(
-                JSON.stringify(patterns.patterns)
+                JSON.stringify(patternBank.patterns)
             );
         });
     });
 
     describe("addPattern()", () => {
-        let patterns;
+        let patternBank;
         beforeEach(() => {
-            patterns = new TransactionPatterns("path");
+            patternBank = new TransactionPatterns("path");
         });
         test("should add the pattern to the inside array", () => {
             const newPattern = { name: "a", lmao: "b" };
-            const prevPatterns = [...patterns.patterns];
-            patterns.addPattern(newPattern);
-            expect(patterns.patterns).toEqual([...prevPatterns, newPattern]);
+            const prevPatterns = [...patternBank.patterns];
+            patternBank.addPattern(newPattern);
+            expect(patternBank.patterns).toEqual([...prevPatterns, newPattern]);
         });
     });
 
     describe("findMatchingPatterns()", () => {
-        let patterns;
+        let patternBank;
         beforeEach(() => {
-            patterns = new TransactionPatterns("path");
-            patterns.patterns = testPatterns;
+            patternBank = new TransactionPatterns("path");
+            patternBank.patterns = testPatterns;
         });
 
         test("should return a pattern object", () => {
@@ -96,8 +96,32 @@ describe("TransactionPatterns", () => {
                 desc: `${testPattern.key[0]} #$AS654D1C OK LMAOOOOO`,
                 amount: 50,
             };
-            const foundPattern = patterns.findMatchingPatterns(testTransaction);
+            const foundPattern =
+                patternBank.findMatchingPatterns(testTransaction);
             expect(foundPattern).toEqual([testPattern]);
+        });
+    });
+
+    describe("getAllKeys()", () => {
+        let patternBank;
+        beforeEach(() => {
+            patternBank = new TransactionPatterns("path");
+            patternBank.patterns = testPatterns;
+        });
+        test("should return an array with unique keys", () => {
+            patternBank.patterns = [patternBank.patterns[0]];
+            let keys = patternBank.patterns[0].key;
+            expect(patternBank.getAllKeys()).toEqual(keys);
+        });
+        test("should return an array with unique keys", () => {
+            let keySet = new Set();
+            patternBank.patterns.forEach((p) => {
+                p.key.forEach((k) => {
+                    keySet.add(k);
+                });
+            });
+            let keys = [...keySet];
+            expect(patternBank.getAllKeys()).toEqual(keys);
         });
     });
 });
