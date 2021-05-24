@@ -169,4 +169,15 @@ describe("TransactionPatterns", () => {
             });
         });
     });
+
+    describe("appendKeyToPattern()", () => {
+        test("should add a key to a pattern", () => {
+            let pattern = patternBank.patterns[0];
+            let newKey = "abcd1234";
+            let newKeys = [...pattern.key, newKey];
+
+            patternBank.appendKeyToPattern(newKey, pattern["Contents"]);
+            expect(pattern.key).toEqual(newKeys);
+        });
+    });
 });
