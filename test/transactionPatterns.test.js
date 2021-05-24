@@ -89,7 +89,7 @@ describe("TransactionPatterns", () => {
             patternBank.patterns = testPatterns;
         });
 
-        test("should return a pattern object", () => {
+        test("should return a matching pattern object", () => {
             const testPattern = testPatterns[0];
             const testTransaction = {
                 date: "01/01/1970",
