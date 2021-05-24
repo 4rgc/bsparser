@@ -4,6 +4,9 @@
   "description": "Bank statement parser.",
   "main": "index.js",
   "scripts": {
+    "dev": "tsc -w",
+    "compile": "tsc",
+    "start": "node ./dist",
     "test": "jest ./test/*.test.js",
     "test-w": "jest ./test/*.test.js --watchAll",
     "coverage": "jest --coverage"
