@@ -8,9 +8,14 @@ jest.mock("../src/util");
 jest.mock("fs");
 
 describe("TransactionPatterns", () => {
+    let patternBank;
+    beforeEach(() => {
+        patternBank = new TransactionPatterns("path");
+        patternBank.patterns = [...testPatterns];
+    });
+
     describe("loadPatterns()", () => {
         let path;
-        let patternBank;
         beforeAll(() => {
             readFileAsText.mockImplementation(
                 jest.fn((p) => `file contents at ${p}`)
@@ -22,8 +27,7 @@ describe("TransactionPatterns", () => {
             jest.unmock(JSON.parse);
         });
         beforeEach(() => {
-            path = "path";
-            patternBank = new TransactionPatterns(path);
+            path = patternBank.diskRelPath;
             patternBank.loadPatterns();
         });
         afterEach(() => {
@@ -42,13 +46,11 @@ describe("TransactionPatterns", () => {
 
     describe("savePatterns()", () => {
         let path;
-        let patternBank;
         beforeAll(() => {
             writeFile.mockImplementation(jest.fn());
         });
         beforeEach(() => {
-            path = "path";
-            patternBank = new TransactionPatterns(path);
+            path = patternBank.diskRelPath;
             patternBank.patterns = {
                 path,
                 prop2: 1,
@@ -71,10 +73,6 @@ describe("TransactionPatterns", () => {
     });
 
     describe("addPattern()", () => {
-        let patternBank;
-        beforeEach(() => {
-            patternBank = new TransactionPatterns("path");
-        });
         test("should add the pattern to the inside array", () => {
             const newPattern = { name: "a", lmao: "b" };
             const prevPatterns = [...patternBank.patterns];
@@ -84,12 +82,6 @@ describe("TransactionPatterns", () => {
     });
 
     describe("findMatchingPatterns()", () => {
-        let patternBank;
-        beforeEach(() => {
-            patternBank = new TransactionPatterns("path");
-            patternBank.patterns = testPatterns;
-        });
-
         test("should return a matching pattern object", () => {
             const testPattern = testPatterns[0];
             const testTransaction = {
@@ -104,11 +96,6 @@ describe("TransactionPatterns", () => {
     });
 
     describe("getAllKeys()", () => {
-        let patternBank;
-        beforeEach(() => {
-            patternBank = new TransactionPatterns("path");
-            patternBank.patterns = testPatterns;
-        });
         test("should return an array with unique keys", () => {
             patternBank.patterns = [patternBank.patterns[0]];
             let keys = patternBank.patterns[0].key;
@@ -127,11 +114,6 @@ describe("TransactionPatterns", () => {
     });
 
     describe("getAllContents", () => {
-        let patternBank;
-        beforeEach(() => {
-            patternBank = new TransactionPatterns("path");
-            patternBank.patterns = testPatterns;
-        });
         test("should return an array with all contents", () => {
             let contents = [];
             patternBank.patterns.forEach((p) => {
@@ -143,7 +125,6 @@ describe("TransactionPatterns", () => {
     });
 
     describe("getAllCategories()", () => {
-        let patternBank;
         const isACategoryObj = (obj) => {
             const categoryObj = {
                 category: "",
@@ -157,11 +138,6 @@ describe("TransactionPatterns", () => {
         };
         const deepContains = (arr, obj) =>
             arr.filter((el) => equal(el, obj)).length > 0;
-
-        beforeEach(() => {
-            patternBank = new TransactionPatterns("path");
-            patternBank.patterns = testPatterns;
-        });
 
         test("should return an array", () => {
             expect(patternBank.getAllCategories()).toBeInstanceOf(Array);
