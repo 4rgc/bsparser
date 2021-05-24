@@ -124,4 +124,20 @@ describe("TransactionPatterns", () => {
             expect(patternBank.getAllKeys()).toEqual(keys);
         });
     });
+
+    describe("getAllContents", () => {
+        let patternBank;
+        beforeEach(() => {
+            patternBank = new TransactionPatterns("path");
+            patternBank.patterns = testPatterns;
+        });
+        test("should return an array with all contents", () => {
+            let contents = [];
+            patternBank.patterns.forEach((p) => {
+                contents.push(p["Contents"]);
+            });
+
+            expect(patternBank.getAllContents()).toEqual(contents);
+        });
+    });
 });
