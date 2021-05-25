@@ -1,7 +1,7 @@
 import { TransactionPatterns } from '../src/TransactionPatterns';
 import { readFileAsText } from '../src/util';
 import fs from 'fs';
-import { testPatterns } from './testutil';
+import { testPatterns } from './testutils';
 import equal from 'deep-equal';
 
 jest.mock('../src/util');

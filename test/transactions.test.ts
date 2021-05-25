@@ -4,7 +4,7 @@ import {
 	testRawTransaction,
 	testMeaningfulTransaction,
 	tsvTransactionOrder,
-} from './testutil';
+} from './testutils';
 
 describe('MeaningfulTransaction', () => {
 	test('initFromRawTransaction', () => {
