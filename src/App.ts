@@ -57,6 +57,20 @@ class App {
 		});
 	}
 
+	removeTransactionsBefore(dateBefore: string): void {
+		this.transactions = this.transactions.filter((transaction) => {
+			const transactionDate = moment(transaction.date, [
+				'M/D/YYYY',
+				'MM/D/YYYY',
+				'M/DD/YYYY',
+				'MM/DD/YYYY',
+			]);
+			return transactionDate.isAfter(
+				moment(dateBefore, 'DD/MM/YYYY').subtract(1, 'day')
+			);
+		});
+	}
+
 	buildTsvFile(meaningfulTransactions: MeaningfulTransaction[]): string {
 		let outTxt =
 			'Date\tAccount\tMain Cat.\tSub Cat.\tContents\tAmount\tInc./Exp.\tDetails\n';
@@ -88,9 +102,10 @@ class App {
 				);
 			}
 
+			const foundPattern = matchingPatterns[0];
 			meaningfulTransactions.push(
 				this.buildMeaningfulTransaction(
-					matchingPatterns,
+					foundPattern,
 					this.transactions[i]
 				)
 			);
@@ -108,41 +123,6 @@ class App {
 			this.patterns.addPattern(newPattern);
 			return newPattern;
 		}
-	}
-
-	buildMeaningfulTransaction(
-		matchingPatterns: Pattern[],
-		transaction: RawTransaction
-	): MeaningfulTransaction {
-		if (matchingPatterns.length > 1) {
-			console.error(
-				`error: multiple matches found\ndesc: ${
-					transaction.desc
-				}\nkey entries: ${JSON.stringify(matchingPatterns)}`
-			);
-		}
-		const foundPattern = matchingPatterns[0];
-		const meaningfulTransaction = new MeaningfulTransaction(this.account);
-		Mapper.MeaningfulTransactionFromRawTransaction(
-			transaction,
-			this.account,
-			foundPattern
-		);
-		return meaningfulTransaction;
-	}
-
-	removeTransactionsBefore(dateBefore: string): void {
-		this.transactions = this.transactions.filter((transaction) => {
-			const transactionDate = moment(transaction.date, [
-				'M/D/YYYY',
-				'MM/D/YYYY',
-				'M/DD/YYYY',
-				'MM/DD/YYYY',
-			]);
-			return transactionDate.isAfter(
-				moment(dateBefore, 'DD/MM/YYYY').subtract(1, 'day')
-			);
-		});
 	}
 
 	async processPatternOrSkipTransaction(
@@ -214,6 +194,19 @@ class App {
                     patterns:\n\
                     ${JSON.stringify(matchingPatterns)}`
 		);
+	}
+
+	buildMeaningfulTransaction(
+		foundPattern: Pattern,
+		transaction: RawTransaction
+	): MeaningfulTransaction {
+		const meaningfulTransaction =
+			Mapper.MeaningfulTransactionFromRawTransaction(
+				transaction,
+				this.account,
+				foundPattern
+			);
+		return meaningfulTransaction;
 	}
 }
 
