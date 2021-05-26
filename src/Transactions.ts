@@ -1,5 +1,3 @@
-import { Pattern } from './util';
-
 export type RawTransaction = { date: string; desc: string; amount: number };
 
 export class MeaningfulTransaction {
@@ -14,19 +12,6 @@ export class MeaningfulTransaction {
 
 	constructor(account: string) {
 		this['Account'] = account;
-	}
-
-	initFromRawTransaction(
-		rawTransaction: RawTransaction,
-		pattern: Pattern
-	): void {
-		this['Date'] = rawTransaction.date;
-		this['Main Cat.'] = pattern['Main Cat.'];
-		this['Sub Cat.'] = pattern['Sub Cat.'];
-		this['Contents'] = pattern['Contents'];
-		this['Amount'] = Math.abs(rawTransaction.amount);
-		this['Inc./Exp.'] = pattern['Inc./Exp.'];
-		this['Details'] = pattern['Details'];
 	}
 
 	toTsvString(): string {

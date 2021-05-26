@@ -18,6 +18,7 @@ import {
 	promptSubcategoryChoice,
 	promptUser,
 } from './IO';
+import Mapper from './Mapper';
 
 class App {
 	patterns: TransactionPatterns;
@@ -122,7 +123,11 @@ class App {
 		}
 		const foundPattern = matchingPatterns[0];
 		const meaningfulTransaction = new MeaningfulTransaction(this.account);
-		meaningfulTransaction.initFromRawTransaction(transaction, foundPattern);
+		Mapper.MeaningfulTransactionFromRawTransaction(
+			transaction,
+			this.account,
+			foundPattern
+		);
 		return meaningfulTransaction;
 	}
 

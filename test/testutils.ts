@@ -1,4 +1,5 @@
 import { RawTransaction, MeaningfulTransaction } from '../src/Transactions';
+import { Pattern } from '../src/util';
 
 const testPattern = {
 	key: ['A', 'B'],
