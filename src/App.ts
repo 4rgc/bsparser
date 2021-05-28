@@ -7,7 +7,7 @@ import {
 import TransactionPatterns from './TransactionPatterns';
 import { readFileAsText } from './util';
 import moment from 'moment';
-import { promptUser } from './IO';
+import { promptSettings, SettingsProps } from './IO/Settings';
 import Mapper from './Mapper';
 import { MultipleMatchingPatternsFoundError } from './Errors';
 import { Pattern } from './types';
@@ -26,9 +26,9 @@ class App {
 	}
 
 	async run(): Promise<void> {
-		const promptReceivedPromise = promptUser();
+		const promptReceivedPromise = promptSettings();
 
-		promptReceivedPromise.then(async (result) => {
+		promptReceivedPromise.then(async (result: SettingsProps) => {
 			this.account =
 				Number.parseInt(result.creditDebit) == 1
 					? 'クレジットカード'
