@@ -1,5 +1,4 @@
 import App from '../src/App';
-import { TransactionPatterns } from '../src/TransactionPatterns';
 import { MeaningfulTransaction } from '../src/Transactions';
 import { testMeaningfulTransaction, testPatterns } from './testutils';
 
@@ -9,13 +8,18 @@ describe('App', () => {
 		// jest.mock('../src/TransactionPatterns');
 		// jest.mock('../src/Transactions');
 		MeaningfulTransaction.prototype.toTsvString = jest.fn(() => '');
-		TransactionPatterns.prototype.loadPatterns = jest.fn();
 	});
 	beforeEach(() => {
 		app = new App();
 		app.patterns.patterns = testPatterns;
 	});
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
 	describe('buildTsvFile()', () => {
+		beforeEach(() => {
+			app.patterns.loadPatterns = jest.fn();
+		});
 		test('should return a string', () => {
 			expect(app.buildTsvFile([])).toBeString();
 		});
