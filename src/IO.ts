@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 import prompt from 'prompt';
-import { Category } from './TransactionPatterns';
 import { RawTransaction } from './Transactions';
-import { Pattern } from './util';
+import { Category, Pattern } from './types';
 
 interface SettingsProps extends prompt.Properties {
 	path: string;
