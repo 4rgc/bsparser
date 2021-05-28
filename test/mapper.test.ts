@@ -1,6 +1,5 @@
 import Mapper from '../src/Mapper';
-import { MeaningfulTransaction, RawTransaction } from '../src/Transactions';
-import { Pattern } from '../src/util';
+import { MeaningfulTransaction } from '../src/Transactions';
 import { testRawTransaction } from './testutils';
 
 describe('Mapper', () => {
@@ -17,13 +16,8 @@ describe('Mapper', () => {
 		const account = 'credit';
 
 		beforeAll(() => {
-			const origFn = Mapper.MeaningfulTransactionFromRawTransaction;
 			Mapper.MeaningfulTransactionFromRawTransaction = jest.fn(
-				(
-					rawTransaction: RawTransaction,
-					account: string,
-					pattern: Pattern
-				) => origFn(rawTransaction, account, pattern)
+				Mapper.MeaningfulTransactionFromRawTransaction
 			);
 		});
 
