@@ -44,12 +44,11 @@ class PatternResolver
 	async resolve(
 		unresolvedObject: UnresolvedPattern
 	): Promise<ResolvedPattern> {
-		const key = await promptPatternKey(unresolvedObject.transaction);
 		const choice = await promptCreateOrAppendToPattern();
 		if (choice == 1) {
-			return this.createNewPattern(key);
+			return this.createNewPattern(unresolvedObject.transaction);
 		} else if (choice == 2) {
-			return this.appendToPattern(key);
+			return this.appendToPattern(unresolvedObject.transaction);
 		} else throw new InvalidNumberChoiceError(1, 2);
 	}
 	async resolveAll(
@@ -65,8 +64,9 @@ class PatternResolver
 	}
 
 	private async createNewPattern(
-		key: Pattern['key'][0]
+		transaction: RawTransaction
 	): Promise<ResolvedPattern> {
+		const key = await promptPatternKey(transaction);
 		const categories = patterns.getAllCategories();
 
 		const pattern: Pattern = await promptNewPattern(key, categories);
@@ -75,8 +75,9 @@ class PatternResolver
 	}
 
 	private async appendToPattern(
-		key: Pattern['key'][0]
+		transaction: RawTransaction
 	): Promise<ResolvedPattern> {
+		const key = await promptPatternKey(transaction);
 		const descriptions = patterns.getAllContents();
 
 		const description = await promptAppendPatternChoice(descriptions);
