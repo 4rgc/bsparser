@@ -4,7 +4,7 @@ import { Category, Pattern } from './types';
 import { readFileAsText } from './util';
 
 
-export class TransactionPatterns {
+class TransactionPatterns {
 	patterns: Pattern[];
 	diskRelPath: string;
 	constructor(path: string) {
@@ -80,3 +80,5 @@ export class TransactionPatterns {
 		else throw new Error('Not found a pattern to push a key in');
 	}
 }
+
+export default new TransactionPatterns('patterns.json');

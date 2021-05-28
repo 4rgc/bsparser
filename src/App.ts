@@ -4,8 +4,8 @@ import {
 	RawTransaction,
 	parseTransactionCSV,
 } from './Transactions';
-import { TransactionPatterns } from './TransactionPatterns';
-import { Pattern, readFileAsText } from './util';
+import TransactionPatterns from './TransactionPatterns';
+import { readFileAsText } from './util';
 import moment from 'moment';
 import {
 	promptAppendPatternChoice,
@@ -19,6 +19,7 @@ import {
 	promptUser,
 } from './IO';
 import Mapper from './Mapper';
+import { Pattern } from './types';
 
 class App {
 	patterns: TransactionPatterns;
@@ -26,7 +27,7 @@ class App {
 	transactions: RawTransaction[];
 
 	constructor() {
-		this.patterns = new TransactionPatterns('patterns.json');
+		this.patterns = TransactionPatterns;
 		this.patterns.loadPatterns();
 		this.account = '';
 		this.transactions = new Array<RawTransaction>();
