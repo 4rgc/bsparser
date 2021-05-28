@@ -65,7 +65,9 @@ class PatternResolver
 		return resolvedPatterns;
 	}
 
-	async createNewPattern(key: Pattern['key'][0]): Promise<ResolvedPattern> {
+	private async createNewPattern(
+		key: Pattern['key'][0]
+	): Promise<ResolvedPattern> {
 		const categories = patterns.getAllCategories();
 
 		const pattern: Pattern = await promptNewPattern(key, categories);
@@ -73,7 +75,9 @@ class PatternResolver
 		return new ResolvedPattern(pattern);
 	}
 
-	async appendToPattern(key: Pattern['key'][0]): Promise<ResolvedPattern> {
+	private async appendToPattern(
+		key: Pattern['key'][0]
+	): Promise<ResolvedPattern> {
 		const descriptions = patterns.getAllContents();
 
 		const description = await promptAppendPatternChoice(descriptions);

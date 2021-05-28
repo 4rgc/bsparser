@@ -101,7 +101,7 @@ export const promptUser = (): Promise<SettingsProps> => {
 	return prompt.get<SettingsProps>(schema);
 };
 
-export const promptProcessPatternOrSkipTransaction = (): Promise<number> => {
+export const promptResolvePatternOrSkipTransaction = (): Promise<number> => {
 	const msg = `A new pattern was found. Would you like to add it or skip the transaction?\
                 \n1 - Add \
                 \n2 - Skip`;
@@ -116,15 +116,14 @@ export const promptCreateOrAppendToPattern = (): Promise<number> => {
 	return promptMultipleChoice(msg, 2);
 };
 
-export const promptDescription = (
-	descriptions: Pattern['Contents'][]
-): Promise<string> => {
+export const promptDescription = (): Promise<string> => {
 	const msg = 'Enter description for the new pattern: ';
 
 	const wrongInputMsg =
 		'This description is already in use. Please try again.';
 
-	const conformCondition = (desc: string) => !descriptions.includes(desc);
+	const conformCondition = () =>
+		true; /*(desc: string) => !descriptions.includes(desc);*/
 
 	return promptConformingText(msg, conformCondition, wrongInputMsg);
 };
@@ -252,4 +251,26 @@ export const promptPatternKey = (
 	const wrongInputMsg = `This description is not a part of the transaction. Please try again. \
                     \n\t${transaction.desc}`;
 	return promptConformingText(msg, conformCondition, wrongInputMsg);
+};
+
+export const promptNewPattern = async (
+	key: string,
+	categories: Category[]
+): Promise<Pattern> => {
+	const description = await promptDescription();
+	const category = await promptCategoryChoice(categories);
+	const subcategory = await promptSubcategoryChoice(category, categories);
+	const incomeExpense = await promptIncomeOrExpense();
+
+	const pattern: Pattern = {
+		key: [key],
+		Contents: description,
+		'Main Cat.': category.category,
+		'Sub Cat.': subcategory,
+		'Inc./Exp.': incomeExpense,
+	};
+	if (!subcategory) {
+		delete pattern['Sub Cat.'];
+	}
+	return pattern;
 };

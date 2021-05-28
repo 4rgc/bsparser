@@ -7,22 +7,14 @@ import {
 import TransactionPatterns from './TransactionPatterns';
 import { readFileAsText } from './util';
 import moment from 'moment';
-import {
-	promptAppendPatternChoice,
-	promptCategoryChoice,
-	promptCreateOrAppendToPattern,
-	promptDescription,
-	promptIncomeOrExpense,
-	promptPatternKey,
-	promptProcessPatternOrSkipTransaction,
-	promptSubcategoryChoice,
-	promptUser,
-} from './IO';
+import { promptUser } from './IO';
 import Mapper from './Mapper';
+import { MultipleMatchingPatternsFoundError } from './Errors';
 import { Pattern } from './types';
+import PatternResolver, { UnresolvedPattern } from './PatternResolver';
 
 class App {
-	patterns: TransactionPatterns;
+	patterns: typeof TransactionPatterns;
 	account: string;
 	transactions: RawTransaction[];
 
@@ -46,8 +38,19 @@ class App {
 			this.transactions = parseTransactionCSV(CSVData);
 			this.removeTransactionsBefore(result.dateBefore);
 
+			const mappedPatterns =
+				await this.mapTransactionsToMatchingPatterns();
+			for (const k of Array.from(mappedPatterns.keys())) {
+				const pattern = mappedPatterns.get(k);
+				if (pattern instanceof UnresolvedPattern) {
+					mappedPatterns.set(
+						k,
+						await PatternResolver.resolve(pattern)
+					);
+				}
+			}
 			const meaningfulTransactions =
-				await this.buildMeaningfulTransactions();
+				this.buildMeaningfulTransactions(mappedPatterns);
 
 			const outTxt = this.buildTsvFile(meaningfulTransactions);
 
@@ -72,18 +75,8 @@ class App {
 		});
 	}
 
-	buildTsvFile(meaningfulTransactions: MeaningfulTransaction[]): string {
-		let outTxt =
-			'Date\tAccount\tMain Cat.\tSub Cat.\tContents\tAmount\tInc./Exp.\tDetails\n';
-		for (const meaningfulTransaction of meaningfulTransactions) {
-			outTxt += meaningfulTransaction.toTsvString();
-			outTxt += '\n';
-		}
-		return outTxt;
-	}
-
-	async buildMeaningfulTransactions(): Promise<MeaningfulTransaction[]> {
-		const meaningfulTransactions: MeaningfulTransaction[] = [];
+	async mapTransactionsToMatchingPatterns(): Promise<Map<number, Pattern>> {
+		const mappedPatterns: Map<number, Pattern> = new Map();
 
 		for (let i = 0; i < this.transactions.length; i++) {
 			const matchingPatterns = this.patterns.findMatchingPatterns(
@@ -91,110 +84,39 @@ class App {
 			);
 
 			if (matchingPatterns.length == 0) {
-				await this.handleNoPatternFound(this.transactions[i]);
-				i--;
-				continue;
-			}
-
-			if (matchingPatterns.length > 1) {
-				this.throwMultipleMatchingPatternsFound(
+				const newUnresolved = new UnresolvedPattern(
+					this.transactions[i]
+				);
+				mappedPatterns.set(i, newUnresolved);
+			} else if (matchingPatterns.length > 1) {
+				throw new MultipleMatchingPatternsFoundError(
 					this.transactions[i],
 					matchingPatterns
 				);
+			} else {
+				mappedPatterns.set(i, matchingPatterns[0]);
 			}
+		}
 
-			const foundPattern = matchingPatterns[0];
-			meaningfulTransactions.push(
-				this.buildMeaningfulTransaction(
-					foundPattern,
-					this.transactions[i]
-				)
-			);
+		return mappedPatterns;
+	}
+
+	buildMeaningfulTransactions(
+		matchingPatterns: Map<number, Pattern>
+	): MeaningfulTransaction[] {
+		const meaningfulTransactions: MeaningfulTransaction[] = [];
+
+		for (let i = 0; i < this.transactions.length; i++) {
+			const foundPattern = matchingPatterns.get(i);
+			if (foundPattern)
+				meaningfulTransactions.push(
+					this.buildMeaningfulTransaction(
+						foundPattern,
+						this.transactions[i]
+					)
+				);
 		}
 		return meaningfulTransactions;
-	}
-
-	private async handleNoPatternFound(
-		transaction: RawTransaction
-	): Promise<Pattern | void> {
-		const newPattern = await this.processPatternOrSkipTransaction(
-			transaction
-		);
-		if (newPattern) {
-			this.patterns.addPattern(newPattern);
-			return newPattern;
-		}
-	}
-
-	async processPatternOrSkipTransaction(
-		transaction: RawTransaction
-	): Promise<void | Pattern> {
-		const choice = await promptProcessPatternOrSkipTransaction();
-		if (choice == 1) return this.processNewPattern(transaction);
-		else if (choice == 2) return;
-		else throw new Error('invalid choice (exp. 1/2)');
-	}
-
-	async processNewPattern(
-		transaction: RawTransaction
-	): Promise<void | Pattern> {
-		const key = await promptPatternKey(transaction);
-		return this.createOrAppendToPattern(key);
-	}
-
-	async createOrAppendToPattern(
-		key: Pattern['key'][0]
-	): Promise<Pattern | void> {
-		const choice = await promptCreateOrAppendToPattern();
-		if (choice == 1) {
-			return this.createNewPattern(key);
-		} else if (choice == 2) {
-			return this.appendToPattern(key);
-		} else {
-			throw new Error('invalid choice (exp. 1/2)');
-		}
-	}
-
-	async createNewPattern(key: Pattern['key'][0]): Promise<Pattern> {
-		const descriptions = this.patterns.getAllContents();
-		const categories = this.patterns.getAllCategories();
-
-		const description = await promptDescription(descriptions);
-		const category = await promptCategoryChoice(categories);
-		const subcategory = await promptSubcategoryChoice(category, categories);
-		const incomeExpense = await promptIncomeOrExpense();
-
-		const pattern: Pattern = {
-			key: [key],
-			Contents: description,
-			'Main Cat.': category.category,
-			'Sub Cat.': subcategory,
-			'Inc./Exp.': incomeExpense,
-		};
-		if (!subcategory) {
-			delete pattern['Sub Cat.'];
-		}
-		return pattern;
-	}
-
-	async appendToPattern(key: Pattern['key'][0]): Promise<void> {
-		const descriptions = this.patterns.getAllContents();
-
-		const description = await promptAppendPatternChoice(descriptions);
-		this.patterns.appendKeyToPattern(key, description);
-	}
-
-	private throwMultipleMatchingPatternsFound(
-		transaction: RawTransaction,
-		matchingPatterns: Pattern[]
-	) {
-		throw new Error(
-			`error: multiple matching patterns found\n\
-                    transaction:\n\
-                    ${JSON.stringify(transaction)}\n\
-                    patterns:\n\
-                    ${JSON.stringify(matchingPatterns)}`
-		);
 	}
 
 	buildMeaningfulTransaction(
@@ -208,6 +130,16 @@ class App {
 				foundPattern
 			);
 		return meaningfulTransaction;
+	}
+
+	buildTsvFile(meaningfulTransactions: MeaningfulTransaction[]): string {
+		let outTxt =
+			'Date\tAccount\tMain Cat.\tSub Cat.\tContents\tAmount\tInc./Exp.\tDetails\n';
+		for (const meaningfulTransaction of meaningfulTransactions) {
+			outTxt += meaningfulTransaction.toTsvString();
+			outTxt += '\n';
+		}
+		return outTxt;
 	}
 }
 

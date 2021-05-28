@@ -3,7 +3,6 @@ import { RawTransaction } from './Transactions';
 import { Category, Pattern } from './types';
 import { readFileAsText } from './util';
 
-
 class TransactionPatterns {
 	patterns: Pattern[];
 	diskRelPath: string;
@@ -78,6 +77,10 @@ class TransactionPatterns {
 		const foundPattern = this.patterns.find((p) => p['Contents'] == desc);
 		if (foundPattern) foundPattern['key'].push(key);
 		else throw new Error('Not found a pattern to push a key in');
+	}
+
+	findByDescription(description: string): Pattern | undefined {
+		return this.patterns.find((p) => p['Contents'] === description);
 	}
 }
 
