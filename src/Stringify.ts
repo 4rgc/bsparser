@@ -12,12 +12,7 @@ const FormattersEnum = Object.freeze({
 			.join(','),
 	tsv: (arr: unknown[]) =>
 		arr
-			.map((el) => {
-				return typeof el === 'string' ||
-					JSON.stringify(el).includes('\t')
-					? `"${el}"`
-					: el;
-			})
+			.map((el) => (JSON.stringify(el).includes('\t') ? `"${el}"` : el))
 			.join('\t'),
 });
 
