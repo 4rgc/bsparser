@@ -1,5 +1,5 @@
 import App from '../src/App';
-import { MeaningfulTransaction } from '../src/Transactions';
+import { Stringify } from '../src/Stringify';
 import { testMeaningfulTransaction, testPatterns } from './testutils';
 
 describe('App', () => {
@@ -7,7 +7,7 @@ describe('App', () => {
 	beforeAll(() => {
 		// jest.mock('../src/TransactionPatterns');
 		// jest.mock('../src/Transactions');
-		MeaningfulTransaction.prototype.toTsvString = jest.fn(() => '');
+		Stringify.MeaningfulTransaction = jest.fn(() => '');
 	});
 	beforeEach(() => {
 		app = new App();
@@ -30,7 +30,7 @@ describe('App', () => {
 		});
 		test('should call toTsvString on the MeaningfulTransaction', () => {
 			app.buildTsvFile([testMeaningfulTransaction]);
-			expect(testMeaningfulTransaction.toTsvString).toBeCalledTimes(1);
+			expect(Stringify.MeaningfulTransaction).toBeCalledTimes(1);
 		});
 	});
 });
