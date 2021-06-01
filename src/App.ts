@@ -87,29 +87,11 @@ class App {
 		for (let i = 0; i < this.transactions.length; i++) {
 			mappedPatterns.set(
 				i,
-				this.mapTransactionToMatchingPattern(this.transactions[i])
+				Mapper.RawTransactionToMatchingPattern(this.transactions[i])
 			);
 		}
 
 		return mappedPatterns;
-	}
-
-	private mapTransactionToMatchingPattern(
-		transaction: RawTransaction
-	): ResolvedPattern | UnresolvedPattern {
-		const matchingPatterns =
-			this.patterns.findMatchingPatterns(transaction);
-
-		if (matchingPatterns.length == 0) {
-			return new UnresolvedPattern(transaction);
-		} else if (matchingPatterns.length > 1) {
-			throw new MultipleMatchingPatternsFoundError(
-				transaction,
-				matchingPatterns
-			);
-		} else {
-			return new ResolvedPattern(matchingPatterns[0]);
-		}
 	}
 
 	buildMeaningfulTransactions(
