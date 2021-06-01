@@ -9,7 +9,6 @@ import { readFileAsText } from './util';
 import moment from 'moment';
 import { promptSettings, SettingsProps } from './IO/Settings';
 import Mapper from './Mapper';
-import { MultipleMatchingPatternsFoundError } from './Errors';
 import { Pattern } from './types';
 import PatternResolver, {
 	ResolvedPattern,
