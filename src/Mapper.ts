@@ -1,5 +1,5 @@
 import { MeaningfulTransaction, RawTransaction } from './Transactions';
-import { Pattern } from './util';
+import { Pattern } from './types';
 
 export default class Mapper {
 	static MeaningfulTransactionFromRawTransaction(
