@@ -14,6 +14,7 @@ import PatternResolver, {
 	ResolvedPattern,
 	UnresolvedPattern,
 } from './PatternResolver';
+import { Stringify } from './Stringify';
 
 class App {
 	patterns: typeof TransactionPatterns;
@@ -128,7 +129,10 @@ class App {
 		let outTxt =
 			'Date\tAccount\tMain Cat.\tSub Cat.\tContents\tAmount\tInc./Exp.\tDetails\n';
 		for (const meaningfulTransaction of meaningfulTransactions) {
-			outTxt += meaningfulTransaction.toTsvString();
+			outTxt += Stringify.MeaningfulTransaction(
+				'tsv',
+				meaningfulTransaction
+			);
 			outTxt += '\n';
 		}
 		return outTxt;

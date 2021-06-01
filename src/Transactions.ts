@@ -13,23 +13,6 @@ export class MeaningfulTransaction {
 	constructor(account: string) {
 		this['Account'] = account;
 	}
-
-	toTsvString(): string {
-		let out = '';
-		out += this['Date'] ? `${this['Date']}\t` : '\t';
-		out += this['Account'] ? `${this['Account']}\t` : '\t';
-		out += this['Main Cat.'] ? `${this['Main Cat.']}\t` : '\t';
-		out += this['Sub Cat.'] ? `${this['Sub Cat.']}\t` : '\t';
-		out += this['Contents'] ? `${this['Contents']}\t` : '\t';
-		out += this['Amount'] ? `${this['Amount']}\t` : '\t';
-		out += this['Inc./Exp.'] ? `${this['Inc./Exp.']}\t` : '\t';
-		out += this['Details'] ? `${this['Details']}\t` : '\t';
-		return out;
-	}
-
-	toString(): string {
-		return JSON.stringify(this);
-	}
 }
 
 export const parseTransactionCSV = (csvData: string): RawTransaction[] => {
