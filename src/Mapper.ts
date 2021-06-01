@@ -1,5 +1,8 @@
 import { MeaningfulTransaction, RawTransaction } from './Transactions';
 import { Pattern } from './types';
+import patterns from './TransactionPatterns';
+import { ResolvedPattern, UnresolvedPattern } from './PatternResolver';
+import { MultipleMatchingPatternsFoundError } from './Errors';
 
 export default class Mapper {
 	static MeaningfulTransactionFromRawTransaction(
@@ -18,5 +21,22 @@ export default class Mapper {
 		meaningfulTransaction['Details'] = pattern['Details'];
 
 		return meaningfulTransaction;
+	}
+
+	static RawTransactionToMatchingPattern(
+		transaction: RawTransaction
+	): ResolvedPattern | UnresolvedPattern {
+		const matchingPatterns = patterns.findMatchingPatterns(transaction);
+
+		if (matchingPatterns.length == 0) {
+			return new UnresolvedPattern(transaction);
+		} else if (matchingPatterns.length > 1) {
+			throw new MultipleMatchingPatternsFoundError(
+				transaction,
+				matchingPatterns
+			);
+		} else {
+			return new ResolvedPattern(matchingPatterns[0]);
+		}
 	}
 }
