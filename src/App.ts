@@ -11,7 +11,10 @@ import { promptSettings, SettingsProps } from './IO/Settings';
 import Mapper from './Mapper';
 import { MultipleMatchingPatternsFoundError } from './Errors';
 import { Pattern } from './types';
-import PatternResolver, { UnresolvedPattern } from './PatternResolver';
+import PatternResolver, {
+	ResolvedPattern,
+	UnresolvedPattern,
+} from './PatternResolver';
 
 class App {
 	patterns: typeof TransactionPatterns;
@@ -75,30 +78,38 @@ class App {
 		});
 	}
 
-	async mapTransactionsToMatchingPatterns(): Promise<Map<number, Pattern>> {
-		const mappedPatterns: Map<number, Pattern> = new Map();
+	async mapTransactionsToMatchingPatterns(): Promise<
+		Map<number, ResolvedPattern | UnresolvedPattern>
+	> {
+		const mappedPatterns: Map<number, ResolvedPattern | UnresolvedPattern> =
+			new Map();
 
 		for (let i = 0; i < this.transactions.length; i++) {
-			const matchingPatterns = this.patterns.findMatchingPatterns(
-				this.transactions[i]
+			mappedPatterns.set(
+				i,
+				this.mapTransactionToMatchingPattern(this.transactions[i])
 			);
-
-			if (matchingPatterns.length == 0) {
-				const newUnresolved = new UnresolvedPattern(
-					this.transactions[i]
-				);
-				mappedPatterns.set(i, newUnresolved);
-			} else if (matchingPatterns.length > 1) {
-				throw new MultipleMatchingPatternsFoundError(
-					this.transactions[i],
-					matchingPatterns
-				);
-			} else {
-				mappedPatterns.set(i, matchingPatterns[0]);
-			}
 		}
 
 		return mappedPatterns;
+	}
+
+	private mapTransactionToMatchingPattern(
+		transaction: RawTransaction
+	): ResolvedPattern | UnresolvedPattern {
+		const matchingPatterns =
+			this.patterns.findMatchingPatterns(transaction);
+
+		if (matchingPatterns.length == 0) {
+			return new UnresolvedPattern(transaction);
+		} else if (matchingPatterns.length > 1) {
+			throw new MultipleMatchingPatternsFoundError(
+				transaction,
+				matchingPatterns
+			);
+		} else {
+			return new ResolvedPattern(matchingPatterns[0]);
+		}
 	}
 
 	buildMeaningfulTransactions(
