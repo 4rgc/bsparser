@@ -1,9 +1,9 @@
 import { RawTransaction } from './Transactions';
-import { promptNewPattern, promptPatternKey } from './IO/NewPattern';
+import { promptNewPattern, promptPatternKey } from './Console/NewPattern';
 import {
 	promptAppendPatternChoice,
 	promptCreateOrAppendToPattern,
-} from './IO/PatternResolution';
+} from './Console/PatternResolution';
 import { Pattern } from './types';
 import { IResolver, IResolved, IUnresolved } from './Resolver';
 import patterns from './TransactionPatterns';
