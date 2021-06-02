@@ -23,3 +23,11 @@ export class InvalidNumberChoiceError extends Error {
 		this.message = `invalid choice, expected ${from}-${to}`;
 	}
 }
+
+export class ArgumentError extends Error {
+	constructor(message: string) {
+		super();
+		this.name = 'ArgumentError';
+		this.message = message;
+	}
+}
