@@ -38,6 +38,7 @@
     "@babel/preset-typescript": "^7.13.0",
     "@types/deep-equal": "^1.0.1",
     "@types/jest": "^26.0.23",
+    "@types/lodash": "^4.14.170",
     "@types/prompt": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
