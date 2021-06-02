@@ -1,5 +1,6 @@
 import { RawTransaction } from '../Transactions';
 import { ArgumentError } from './Errors';
+import _ from 'lodash';
 
 const FormattersEnum = Object.freeze({
 	csv: (row: string): string[] => {
@@ -7,7 +8,11 @@ const FormattersEnum = Object.freeze({
 			.split(',')
 			.map((el) =>
 				typeof el === 'string' && el.charAt(0) === '"'
-					? el.substring(1, el.length - 1).replace('""', '"')
+					? _.replace(
+							el.substring(1, el.length - 1),
+							new RegExp('""', 'g'),
+							'"'
+					  )
 					: el
 			);
 	},
