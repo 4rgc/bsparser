@@ -3,7 +3,13 @@ import { ArgumentError } from './Errors';
 
 const FormattersEnum = Object.freeze({
 	csv: (row: string): string[] => {
-		return row.split(',');
+		return row
+			.split(',')
+			.map((el) =>
+				typeof el === 'string' && el.charAt(0) === '"'
+					? el.substring(1, el.length - 1).replace('""', '"')
+					: el
+			);
 	},
 	tsv: (row: string): string[] => {
 		return row.split('\t');

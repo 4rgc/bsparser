@@ -29,6 +29,15 @@ describe('RawTransactionParser', () => {
 				expect(new Date(date)).toBeValidDate();
 			});
 
+			test('should remove wrapping double quotes from desc prop', () => {
+				const desc = RawTransactionParser.fromMultiline(
+					testRow,
+					'csv'
+				)[0].desc;
+
+				expect(desc.charAt(0)).not.toBe('"');
+			});
+
 			test('should throw on invalid date', () => {
 				expect(() =>
 					RawTransactionParser.fromMultiline(testThrowRow, 'csv')
