@@ -1,6 +1,12 @@
 import Mapper from '../src/Utility/Mapper';
 import { MeaningfulTransaction } from '../src/Transactions';
-import { testRawTransaction } from './testutils';
+import { testPattern, testRawTransaction } from './testutils';
+import patterns from '../src/Patterns/TransactionPatterns';
+import {
+	ResolvedPattern,
+	UnresolvedPattern,
+} from '../src/Patterns/PatternResolver';
+import { MultipleMatchingPatternsFoundError } from '../src/Utility/Errors';
 
 describe('Mapper', () => {
 	describe('MeaningfulTransactionFromRawTransaction()', () => {
@@ -50,6 +56,35 @@ describe('Mapper', () => {
 			expect(mt['Inc./Exp.']).toBe(testPattern['Inc./Exp.']);
 			expect(mt['Main Cat.']).toBe(testPattern['Main Cat.']);
 			expect(mt['Sub Cat.']).toBe(testPattern['Sub Cat.']);
+		});
+	});
+
+	describe('RawTransactionToMatchingPattern()', () => {
+		test('should return a resolved pattern', () => {
+			patterns.findMatchingPatterns = jest.fn(() => [testPattern]);
+
+			expect(
+				Mapper.RawTransactionToMatchingPattern(testRawTransaction)
+			).toBeInstanceOf(ResolvedPattern);
+		});
+
+		test('should return an unresolved pattern', () => {
+			patterns.findMatchingPatterns = jest.fn(() => []);
+
+			expect(
+				Mapper.RawTransactionToMatchingPattern(testRawTransaction)
+			).toBeInstanceOf(UnresolvedPattern);
+		});
+
+		test('should throw MultipleMatchingPatternsFoundError', () => {
+			patterns.findMatchingPatterns = jest.fn(() => [
+				testPattern,
+				testPattern,
+			]);
+
+			expect(() =>
+				Mapper.RawTransactionToMatchingPattern(testRawTransaction)
+			).toThrow(MultipleMatchingPatternsFoundError);
 		});
 	});
 });
