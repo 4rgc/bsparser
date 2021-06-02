@@ -1,9 +1,5 @@
 import fs from 'fs';
-import {
-	MeaningfulTransaction,
-	RawTransaction,
-	parseTransactionCSV,
-} from './Transactions';
+import { MeaningfulTransaction, RawTransaction } from './Transactions';
 import TransactionPatterns from './Patterns/TransactionPatterns';
 import { readFileAsText } from './util';
 import moment from 'moment';
@@ -15,6 +11,7 @@ import PatternResolver, {
 	UnresolvedPattern,
 } from './Patterns/PatternResolver';
 import { Stringify } from './Utility/Stringify';
+import RawTransactionParser from './Utility/RawTransactionParser';
 
 class App {
 	patterns: typeof TransactionPatterns;
@@ -38,7 +35,10 @@ class App {
 					: 'デビットカード';
 
 			const CSVData = readFileAsText(result.path);
-			this.transactions = parseTransactionCSV(CSVData);
+			this.transactions = RawTransactionParser.fromMultiline(
+				CSVData,
+				'csv'
+			);
 			this.removeTransactionsBefore(result.dateBefore);
 
 			const mappedPatterns =
