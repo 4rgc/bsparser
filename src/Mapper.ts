@@ -1,7 +1,7 @@
 import { MeaningfulTransaction, RawTransaction } from './Transactions';
 import { Pattern } from './types';
 import patterns from './Patterns/TransactionPatterns';
-import { ResolvedPattern, UnresolvedPattern } from './PatternResolver';
+import { ResolvedPattern, UnresolvedPattern } from './Patterns/PatternResolver';
 import { MultipleMatchingPatternsFoundError } from './Errors';
 
 export default class Mapper {

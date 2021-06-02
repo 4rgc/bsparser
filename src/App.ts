@@ -13,7 +13,7 @@ import { Pattern } from './types';
 import PatternResolver, {
 	ResolvedPattern,
 	UnresolvedPattern,
-} from './PatternResolver';
+} from './Patterns/PatternResolver';
 import { Stringify } from './Stringify';
 
 class App {

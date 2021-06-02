@@ -1,13 +1,13 @@
-import { RawTransaction } from './Transactions';
-import { promptNewPattern, promptPatternKey } from './Console/NewPattern';
+import { RawTransaction } from '../Transactions';
+import { promptNewPattern, promptPatternKey } from '../Console/NewPattern';
 import {
 	promptAppendPatternChoice,
 	promptCreateOrAppendToPattern,
-} from './Console/PatternResolution';
-import { Pattern } from './types';
-import { IResolver, IResolved, IUnresolved } from './Resolver';
-import patterns from './Patterns/TransactionPatterns';
-import { InvalidNumberChoiceError } from './Errors';
+} from '../Console/PatternResolution';
+import { Pattern } from '../types';
+import { IResolver, IResolved, IUnresolved } from '../Resolver';
+import patterns from './TransactionPatterns';
+import { InvalidNumberChoiceError } from '../Errors';
 
 export class ResolvedPattern implements IResolved, Pattern {
 	constructor(pattern: Pattern) {
