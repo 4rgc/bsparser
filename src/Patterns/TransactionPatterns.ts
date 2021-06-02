@@ -1,7 +1,7 @@
 import fs from 'fs';
-import { RawTransaction } from './Transactions';
-import { Category, Pattern } from './types';
-import { readFileAsText } from './util';
+import { RawTransaction } from '../Transactions';
+import { Category, Pattern } from '../types';
+import { readFileAsText } from '../util';
 
 class TransactionPatterns {
 	patterns: Pattern[];

@@ -6,7 +6,7 @@ import {
 } from './Console/PatternResolution';
 import { Pattern } from './types';
 import { IResolver, IResolved, IUnresolved } from './Resolver';
-import patterns from './TransactionPatterns';
+import patterns from './Patterns/TransactionPatterns';
 import { InvalidNumberChoiceError } from './Errors';
 
 export class ResolvedPattern implements IResolved, Pattern {

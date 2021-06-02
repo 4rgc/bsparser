@@ -4,7 +4,7 @@ import {
 	RawTransaction,
 	parseTransactionCSV,
 } from './Transactions';
-import TransactionPatterns from './TransactionPatterns';
+import TransactionPatterns from './Patterns/TransactionPatterns';
 import { readFileAsText } from './util';
 import moment from 'moment';
 import { promptSettings, SettingsProps } from './Console/Settings';

@@ -1,6 +1,6 @@
 import { MeaningfulTransaction, RawTransaction } from './Transactions';
 import { Pattern } from './types';
-import patterns from './TransactionPatterns';
+import patterns from './Patterns/TransactionPatterns';
 import { ResolvedPattern, UnresolvedPattern } from './PatternResolver';
 import { MultipleMatchingPatternsFoundError } from './Errors';
 

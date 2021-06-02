@@ -1,4 +1,4 @@
-import TransactionPatterns from '../src/TransactionPatterns';
+import TransactionPatterns from '../src/Patterns/TransactionPatterns';
 import { readFileAsText } from '../src/util';
 import fs from 'fs';
 import { testPatterns } from './testutils';
