@@ -1,4 +1,4 @@
-import { MeaningfulTransaction } from './Transactions';
+import { MeaningfulTransaction } from '../Transactions';
 
 const FormattersEnum = Object.freeze({
 	csv: (arr: unknown[]) =>

@@ -1,4 +1,4 @@
-import { Stringify } from '../src/Stringify';
+import { Stringify } from '../src/Utility/Stringify';
 import { MeaningfulTransaction } from '../src/Transactions';
 import { testMeaningfulTransaction, tsvTransactionOrder } from './testutils';
 

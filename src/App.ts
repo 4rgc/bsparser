@@ -14,7 +14,7 @@ import PatternResolver, {
 	ResolvedPattern,
 	UnresolvedPattern,
 } from './Patterns/PatternResolver';
-import { Stringify } from './Stringify';
+import { Stringify } from './Utility/Stringify';
 
 class App {
 	patterns: typeof TransactionPatterns;
