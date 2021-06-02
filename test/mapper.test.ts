@@ -1,4 +1,4 @@
-import Mapper from '../src/Mapper';
+import Mapper from '../src/Utility/Mapper';
 import { MeaningfulTransaction } from '../src/Transactions';
 import { testRawTransaction } from './testutils';
 

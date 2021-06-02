@@ -8,7 +8,7 @@ import TransactionPatterns from './Patterns/TransactionPatterns';
 import { readFileAsText } from './util';
 import moment from 'moment';
 import { promptSettings, SettingsProps } from './Console/Settings';
-import Mapper from './Mapper';
+import Mapper from './Utility/Mapper';
 import { Pattern } from './types';
 import PatternResolver, {
 	ResolvedPattern,
