@@ -2,7 +2,7 @@ import { MeaningfulTransaction, RawTransaction } from './Transactions';
 import { Pattern } from './types';
 import patterns from './Patterns/TransactionPatterns';
 import { ResolvedPattern, UnresolvedPattern } from './Patterns/PatternResolver';
-import { MultipleMatchingPatternsFoundError } from './Errors';
+import { MultipleMatchingPatternsFoundError } from './Utility/Errors';
 
 export default class Mapper {
 	static MeaningfulTransactionFromRawTransaction(
