@@ -199,6 +199,14 @@ describe('PatternBank', () => {
 			patternBank.appendKeyToPattern(newKey, pattern['Contents']);
 			expect(pattern.key).toEqual(newKeys);
 		});
+
+		test('should throw if no pattern found', () => {
+			const newKey = 'abcd1234';
+
+			expect(() =>
+				patternBank.appendKeyToPattern(newKey, 'randomstring')
+			).toThrow();
+		});
 	});
 
 	describe('findByDescription()', () => {
