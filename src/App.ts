@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { MeaningfulTransaction, RawTransaction } from './Transactions';
-import TransactionPatterns from './Patterns/TransactionPatterns';
+import PatternBank from './Patterns/PatternBank';
 import { readFileAsText } from './util';
 import moment from 'moment';
 import { promptSettings, SettingsProps } from './Console/Settings';
@@ -14,12 +14,12 @@ import { Stringify } from './Utility/Stringify';
 import RawTransactionParser from './Utility/RawTransactionParser';
 
 class App {
-	patterns: typeof TransactionPatterns;
+	patterns: typeof PatternBank;
 	account: string;
 	transactions: RawTransaction[];
 
 	constructor() {
-		this.patterns = TransactionPatterns;
+		this.patterns = PatternBank;
 		this.patterns.loadPatterns();
 		this.account = '';
 		this.transactions = new Array<RawTransaction>();

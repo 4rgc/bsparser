@@ -1,7 +1,7 @@
 import Mapper from '../src/Utility/Mapper';
 import { MeaningfulTransaction } from '../src/Transactions';
 import { testPattern, testRawTransaction } from './testutils';
-import patterns from '../src/Patterns/TransactionPatterns';
+import patterns from '../src/Patterns/PatternBank';
 import {
 	ResolvedPattern,
 	UnresolvedPattern,

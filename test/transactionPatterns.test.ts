@@ -1,4 +1,4 @@
-import TransactionPatterns from '../src/Patterns/TransactionPatterns';
+import PatternBank from '../src/Patterns/PatternBank';
 import { readFileAsText } from '../src/util';
 import fs from 'fs';
 import { testPatterns } from './testutils';
@@ -8,8 +8,8 @@ jest.mock('../src/util');
 jest.mock('fs');
 
 describe('TransactionPatterns', () => {
-	const origPatternBank = TransactionPatterns;
-	let patternBank: typeof TransactionPatterns;
+	const origPatternBank = PatternBank;
+	let patternBank: typeof PatternBank;
 
 	beforeEach(() => {
 		patternBank = Object.create(origPatternBank);

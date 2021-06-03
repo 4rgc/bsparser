@@ -3,7 +3,7 @@ import { RawTransaction } from '../Transactions';
 import { Category, Pattern } from '../types';
 import { readFileAsText } from '../util';
 
-class TransactionPatterns {
+class PatternBank {
 	patterns: Pattern[];
 	diskRelPath: string;
 	constructor(path: string) {
@@ -84,4 +84,4 @@ class TransactionPatterns {
 	}
 }
 
-export default new TransactionPatterns('patterns.json');
+export default new PatternBank('patterns.json');
