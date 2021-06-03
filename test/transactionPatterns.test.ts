@@ -7,7 +7,7 @@ import equal from 'deep-equal';
 jest.mock('../src/util');
 jest.mock('fs');
 
-describe('TransactionPatterns', () => {
+describe('PatternBank', () => {
 	const origPatternBank = PatternBank;
 	let patternBank: typeof PatternBank;
 
@@ -198,6 +198,20 @@ describe('TransactionPatterns', () => {
 
 			patternBank.appendKeyToPattern(newKey, pattern['Contents']);
 			expect(pattern.key).toEqual(newKeys);
+		});
+	});
+
+	describe('findByDescription()', () => {
+		test('should return a matching pattern', () => {
+			const description = 'Test1';
+			expect(patternBank.findByDescription(description)).toBe(
+				testPatterns[1]
+			);
+		});
+
+		test('should return undefined if no pattern is found', () => {
+			const description = 'TestTest';
+			expect(patternBank.findByDescription(description)).toBe(undefined);
 		});
 	});
 });
