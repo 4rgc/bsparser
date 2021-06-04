@@ -56,6 +56,7 @@ describe('RawTransactionParser', () => {
 		});
 		describe('using tsv', () => {
 			const testRow = `4/1/2021\tDOMINOS PIZZA  10754     BROOKLYN   NY \t-24.98`,
+				testRow2 = `4/1/2021\tDOMINOS PIZZA  10754     BROOKLYN   NY \t-24.98\n\n\n`,
 				testThrowRow = `40/1/2021\tDOMINOS PIZZA  10754     BROOKLYN   NY \t-24.98`;
 
 			test('should return a RawTransaction array', () => {
@@ -77,6 +78,15 @@ describe('RawTransactionParser', () => {
 					/^(0?[1-9]|1[0-2])\/(0?[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/
 				);
 				expect(new Date(date)).toBeValidDate();
+			});
+
+			test('should return one object', () => {
+				const result = RawTransactionParser.fromMultiline(
+					testRow2,
+					'tsv'
+				);
+				expect(result).toBeArray();
+				expect(result).toBeArrayOfSize(1);
 			});
 
 			test('should throw on invalid date', () => {
