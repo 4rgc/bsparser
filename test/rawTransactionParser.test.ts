@@ -48,6 +48,15 @@ describe('RawTransactionParser', () => {
 				expect(desc[desc.indexOf('BROOKLYN') - 2]).not.toBe('"');
 			});
 
+			test('should return one object', () => {
+				const result = RawTransactionParser.fromMultiline(
+					testRowWithEmpty,
+					'csv'
+				);
+				expect(result).toBeArray();
+				expect(result).toBeArrayOfSize(1);
+			});
+
 			test('should throw on invalid date', () => {
 				expect(() =>
 					RawTransactionParser.fromMultiline(testThrowRow, 'csv')
