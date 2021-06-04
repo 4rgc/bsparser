@@ -26,7 +26,8 @@ export default class RawTransactionParser {
 		data: string,
 		format: string & keyof typeof FormattersEnum
 	): RawTransaction[] {
-		const rows = data.split('\n');
+		let rows = data.split('\n');
+		rows = rows.filter((row) => row !== '');
 		const ret = [];
 		for (const row of rows) {
 			const props = FormattersEnum[format](row);
@@ -38,7 +39,7 @@ export default class RawTransactionParser {
 
 	private static buildObject(props: string[]) {
 		if (
-			/^(0?[1-9]|1[0-2])\/(0?[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/.test(
+			/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/.test(
 				props[0]
 			) === false &&
 			isNaN(Date.parse(props[0]))
