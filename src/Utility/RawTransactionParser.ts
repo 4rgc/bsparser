@@ -39,10 +39,9 @@ export default class RawTransactionParser {
 
 	private static buildObject(props: string[]) {
 		if (
-			/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/.test(
+			/^(0?[1-9]|1[0-2])\/(0?[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/.test(
 				props[0]
-			) === false &&
-			isNaN(Date.parse(props[0]))
+			) === false
 		)
 			throw new ArgumentError('must be a valid date following MM/DD/YY');
 
