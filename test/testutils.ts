@@ -24,7 +24,7 @@ testMeaningfulTransaction['Inc./Exp.'] = 'exp';
 testMeaningfulTransaction['Main Cat.'] = 'cat';
 testMeaningfulTransaction['Sub Cat.'] = 'subcat';
 
-const tsvTransactionOrder: string[] = [
+const MeaningfulTransactionOrder: (string & keyof MeaningfulTransaction)[] = [
 	'Date',
 	'Account',
 	'Main Cat.',
@@ -62,6 +62,6 @@ export {
 	testPattern,
 	testRawTransaction,
 	testMeaningfulTransaction,
-	tsvTransactionOrder,
+	MeaningfulTransactionOrder,
 	testPatterns,
 };
