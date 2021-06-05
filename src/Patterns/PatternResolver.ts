@@ -4,13 +4,14 @@ import {
 	promptAppendPatternChoice,
 	promptCreateOrAppendToPattern,
 } from '../Console/PatternResolution';
-import { Pattern } from '../types';
+import Pattern from './Pattern';
 import { IResolver, IResolved, IUnresolved } from '../Resolver';
 import patterns from './PatternBank';
 import { InvalidNumberChoiceError } from '../Utility/Errors';
 
-export class ResolvedPattern implements IResolved, Pattern {
+export class ResolvedPattern extends Pattern implements IResolved {
 	constructor(pattern: Pattern) {
+		super();
 		Object.assign(this, pattern);
 	}
 
@@ -23,8 +24,9 @@ export class ResolvedPattern implements IResolved, Pattern {
 	Details?: string;
 }
 
-export class UnresolvedPattern implements IUnresolved, Pattern {
+export class UnresolvedPattern extends Pattern implements IUnresolved {
 	constructor(transaction: RawTransaction) {
+		super();
 		this.transaction = transaction;
 	}
 
@@ -67,8 +69,8 @@ class PatternResolver
 		transaction: RawTransaction
 	): Promise<ResolvedPattern> {
 		const key = await promptPatternKey(transaction);
-		const categories = patterns.getAllCategories();
 
+		const categories = patterns.getAllCategories();
 		const pattern: Pattern = await promptNewPattern(key, categories);
 		patterns.addPattern(pattern);
 		return new ResolvedPattern(pattern);
@@ -82,6 +84,7 @@ class PatternResolver
 
 		const description = await promptAppendPatternChoice(descriptions);
 		patterns.appendKeyToPattern(key, description);
+
 		const appendedPattern = patterns.findByDescription(description);
 		if (!appendedPattern) throw new Error('appendedPattern was null');
 		return new ResolvedPattern(appendedPattern);
