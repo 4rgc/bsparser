@@ -1,4 +1,5 @@
 import { MeaningfulTransaction } from '../Transactions';
+import { FormatterError } from './Errors';
 
 const FormattersEnum = Object.freeze({
 	csv: (arr: unknown[]) =>
@@ -12,9 +13,12 @@ const FormattersEnum = Object.freeze({
 			.join(','),
 	tsv: (arr: unknown[]) =>
 		arr
-			.map((el) =>
-				el ? (JSON.stringify(el).includes('\t') ? `"${el}"` : el) : ''
-			)
+			.map((el) => {
+				if (!el) return '';
+				if (JSON.stringify(el).includes('\\t'))
+					throw new FormatterError('\\t not expected');
+				return el;
+			})
 			.join('\t'),
 });
 
