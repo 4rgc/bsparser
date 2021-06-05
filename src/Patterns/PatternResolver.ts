@@ -83,11 +83,12 @@ class PatternResolver
 		const descriptions = patterns.getAllContents();
 
 		const description = await promptAppendPatternChoice(descriptions);
-		patterns.appendKeyToPattern(key, description);
+		const patternToAppend = patterns.findByDescription(description);
+		if (!patternToAppend) throw new Error('patternToAppend was null');
 
-		const appendedPattern = patterns.findByDescription(description);
-		if (!appendedPattern) throw new Error('appendedPattern was null');
-		return new ResolvedPattern(appendedPattern);
+		patternToAppend.appendKey(key);
+
+		return new ResolvedPattern(patternToAppend);
 	}
 }
 
