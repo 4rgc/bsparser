@@ -7,4 +7,3 @@ script:
     - npm run lint
     - npm run test
     - npm run compile
-    - jest --coverage && coveralls < coverage/lcov.info
