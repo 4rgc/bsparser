@@ -4,15 +4,17 @@ const FormattersEnum = Object.freeze({
 	csv: (arr: unknown[]) =>
 		arr
 			.map((el) => {
-				return typeof el === 'string' ||
-					JSON.stringify(el).includes(',')
-					? `"${el}"`
-					: el;
+				return el
+					? typeof el === 'string' ||
+							(JSON.stringify(el).includes(',') ? `"${el}"` : el)
+					: '';
 			})
 			.join(','),
 	tsv: (arr: unknown[]) =>
 		arr
-			.map((el) => (JSON.stringify(el).includes('\t') ? `"${el}"` : el))
+			.map((el) =>
+				el ? (JSON.stringify(el).includes('\t') ? `"${el}"` : el) : ''
+			)
 			.join('\t'),
 });
 
