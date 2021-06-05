@@ -1,5 +1,6 @@
 import { RawTransaction } from '../Transactions';
-import { Category, Pattern } from '../types';
+import { Category } from '../types';
+import Pattern from '../Patterns/Pattern';
 import { promptConformingText, promptMultipleChoice } from './General';
 
 const promptDescription = (): Promise<string> => {
@@ -129,13 +130,13 @@ export const promptNewPattern = async (
 	const subcategory = await promptSubcategoryChoice(category, categories);
 	const incomeExpense = await promptIncomeOrExpense();
 
-	const pattern: Pattern = {
+	const pattern: Pattern = Object.assign(new Pattern(), {
 		key: [key],
 		Contents: description,
 		'Main Cat.': category.category,
 		'Sub Cat.': subcategory,
 		'Inc./Exp.': incomeExpense,
-	};
+	});
 	if (!subcategory) {
 		delete pattern['Sub Cat.'];
 	}
