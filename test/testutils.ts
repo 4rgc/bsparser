@@ -1,13 +1,14 @@
+import Pattern from '../src/Patterns/Pattern';
 import { RawTransaction, MeaningfulTransaction } from '../src/Transactions';
 
-const testPattern = {
+const testPattern = Object.assign(new Pattern(), {
 	key: ['A', 'B'],
 	'Main Cat.': 'Cat',
 	'Sub Cat.': 'Subcat',
 	Contents: 'AB',
 	'Inc./Exp.': 'Exp',
 	Details: '',
-};
+});
 
 const testRawTransaction: RawTransaction = {
 	date: '01/01/1970',
@@ -36,26 +37,26 @@ const MeaningfulTransactionOrder: (string & keyof MeaningfulTransaction)[] = [
 ];
 
 const testPatterns = [
-	{
+	Object.assign(new Pattern(), {
 		key: ['test', 'TST'],
 		Contents: 'Test',
 		'Main Cat.': 'testcat',
 		'Sub Cat.': 'subcat',
 		'Inc./Exp.': '支出',
-	},
-	{
+	}),
+	Object.assign(new Pattern(), {
 		key: ['t1', 'T1'],
 		Contents: 'Test1',
 		'Main Cat.': 'testcat',
 		'Inc./Exp.': '支出',
-	},
-	{
+	}),
+	Object.assign(new Pattern(), {
 		key: ['tset', 'TSET'],
 		Contents: 'Test3',
 		'Main Cat.': 'testcat1',
 		'Sub Cat.': 'subcat',
 		'Inc./Exp.': '支出',
-	},
+	}),
 ];
 
 export {

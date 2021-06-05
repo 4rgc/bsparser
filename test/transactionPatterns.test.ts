@@ -3,9 +3,9 @@ import { readFileAsText } from '../src/util';
 import fs from 'fs';
 import { testPatterns } from './testutils';
 import equal from 'deep-equal';
+import Pattern from '../src/Patterns/Pattern';
 
 jest.mock('../src/util');
-jest.mock('fs');
 
 describe('PatternBank', () => {
 	const origPatternBank = PatternBank;
@@ -16,34 +16,46 @@ describe('PatternBank', () => {
 		Object.assign(patternBank, origPatternBank);
 		patternBank.patterns = [...testPatterns];
 	});
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
 
 	describe('loadPatterns()', () => {
-		let path: string;
+		let patterns: string;
 
 		beforeAll(() => {
-			(readFileAsText as jest.Mock).mockImplementation(
-				jest.fn((p) => `file contents at ${p}`)
-			);
-			JSON.parse = jest.fn();
-		});
-		afterAll(() => {
-			jest.unmock('../src/util');
+			(readFileAsText as jest.Mock).mockImplementation((p) => {
+				if (p === patternBank.diskRelPath) {
+					return patterns;
+				}
+				return 'a';
+			});
 		});
 		beforeEach(() => {
-			path = patternBank.diskRelPath;
+			patterns =
+				'[{"key": ["test", "TST"],"Contents": "Test","Main Cat.": "testcat","Sub Cat.": "subcat","Inc./Exp.": "支出"}]';
 			patternBank.loadPatterns();
 		});
-		afterEach(() => {
-			jest.clearAllMocks();
+
+		test('should set patterns prop to an array', () => {
+			expect(patternBank.patterns).toBeArray();
 		});
 
-		test('should call readFileAsText', () => {
-			expect(readFileAsText).toBeCalledTimes(1);
+		test('should add Pattern to the patterns array', () => {
+			expect(patternBank.patterns[0]).toBeInstanceOf(Pattern);
 		});
 
-		test('should call JSON.parse with file contents', () => {
-			expect(JSON.parse).toBeCalledTimes(1);
-			expect(JSON.parse).toBeCalledWith(`file contents at ${path}`);
+		test('should add multiple Patterns to the patterns array', () => {
+			patterns = JSON.stringify(testPatterns);
+			patternBank.loadPatterns();
+
+			for (const pattern of patternBank.patterns) {
+				expect(pattern).toBeInstanceOf(Pattern);
+			}
+		});
+
+		test('should read patterns from diskRelPath', () => {
+			expect(patternBank.patterns).toEqual([testPatterns[0]]);
 		});
 	});
 
@@ -57,12 +69,12 @@ describe('PatternBank', () => {
 		beforeEach(() => {
 			path = patternBank.diskRelPath;
 			patternBank.patterns = [
-				{
+				Object.assign(new Pattern(), {
 					key: [''],
 					Contents: path,
 					'Main Cat.': 'cat',
 					'Inc./Exp.': 'inc',
-				},
+				}),
 			];
 			patternBank.savePatterns();
 		});
@@ -85,12 +97,12 @@ describe('PatternBank', () => {
 
 	describe('addPattern()', () => {
 		test('should add the pattern to the inside array', () => {
-			const newPattern = {
+			const newPattern = Object.assign(new Pattern(), {
 				key: ['okokok'],
 				Contents: 'cont',
 				'Main Cat.': 'cat',
 				'Inc./Exp.': 'inc',
-			};
+			});
 			const prevPatterns = [...patternBank.patterns];
 			patternBank.addPattern(newPattern);
 			expect(patternBank.patterns).toEqual([...prevPatterns, newPattern]);

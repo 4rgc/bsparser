@@ -1,7 +1,8 @@
 import fs from 'fs';
 import { RawTransaction } from '../Transactions';
-import { Category, Pattern } from '../types';
+import { Category } from '../types';
 import { readFileAsText } from '../util';
+import Pattern from './Pattern';
 
 class PatternBank {
 	patterns: Pattern[];
@@ -12,7 +13,9 @@ class PatternBank {
 	}
 
 	loadPatterns(): void {
-		this.patterns = JSON.parse(readFileAsText(this.diskRelPath));
+		this.patterns = JSON.parse(readFileAsText(this.diskRelPath)).map(
+			(pattern: unknown) => Object.assign(new Pattern(), pattern)
+		);
 	}
 
 	async savePatterns(): Promise<void> {
