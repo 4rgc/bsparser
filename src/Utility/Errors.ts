@@ -35,7 +35,7 @@ export class ArgumentError extends Error {
 export class FormatterError extends Error {
 	constructor(message: string) {
 		super();
-		this.name = 'FormaterError';
+		this.name = 'FormatterError';
 		this.message = message;
 	}
 }
