@@ -5,7 +5,7 @@ import {
 	promptCreateOrAppendToPattern,
 } from '../Console/PatternResolution';
 import Pattern from './Pattern';
-import { IResolver, IResolved, IUnresolved } from '../Resolver';
+import { IResolver, IResolved, IUnresolved } from '../Interfaces/IResolver';
 import patterns from './PatternBank';
 import { InvalidNumberChoiceError } from '../Utility/Errors';
 

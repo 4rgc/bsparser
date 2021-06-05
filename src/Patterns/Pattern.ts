@@ -1,4 +1,4 @@
-import { ICloneable } from '../Cloneable';
+import { ICloneable } from '../Interfaces/ICloneable';
 
 export default class Pattern implements ICloneable<Pattern> {
 	key: string[];
