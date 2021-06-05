@@ -31,3 +31,11 @@ export class ArgumentError extends Error {
 		this.message = message;
 	}
 }
+
+export class FormatterError extends Error {
+	constructor(message: string) {
+		super();
+		this.name = 'FormaterError';
+		this.message = message;
+	}
+}
