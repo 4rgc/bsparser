@@ -4,6 +4,7 @@ import {
 	testMeaningfulTransaction,
 	MeaningfulTransactionOrder,
 } from './testutils';
+import { FormatterError } from '../src/Utility/Errors';
 
 describe('Stringify', () => {
 	describe('MeaningfulTransaction()', () => {
@@ -34,6 +35,13 @@ describe('Stringify', () => {
 			const undefIndex = MeaningfulTransactionOrder.indexOf('Details');
 			expect(mt[MeaningfulTransactionOrder[undefIndex]]).toBe(undefined);
 			expect(splitTsvMt[undefIndex]).toBe('');
+		});
+
+		test('should throw on field containing \\t', () => {
+			mt['Main Cat.'] += '\t';
+			expect(() => Stringify.MeaningfulTransaction('tsv', mt)).toThrow(
+				FormatterError
+			);
 		});
 	});
 });
