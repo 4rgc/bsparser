@@ -1,4 +1,6 @@
-export default class Pattern {
+import { ICloneable } from '../Cloneable';
+
+export default class Pattern implements ICloneable<Pattern> {
 	key: string[];
 	'Main Cat.': string;
 	'Sub Cat.'?: string;
@@ -9,6 +11,10 @@ export default class Pattern {
 	constructor() {
 		this.key = [];
 		this.Contents = 'invalid';
+	}
+	clone(): Pattern {
+		const clone = new Pattern();
+		return Object.assign(clone, this);
 	}
 
 	appendKey(newKey: string): void {
