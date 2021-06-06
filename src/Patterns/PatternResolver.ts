@@ -7,7 +7,6 @@ import {
 import Pattern from './Pattern';
 import { IResolver, IResolved, IUnresolved } from '../Interfaces/IResolver';
 import patterns from './PatternBank';
-import { InvalidNumberChoiceError } from '../Utility/Errors';
 
 export class ResolvedPattern extends Pattern implements IResolved {
 	constructor(pattern: Pattern) {
@@ -47,12 +46,13 @@ class PatternResolver
 		unresolvedObject: UnresolvedPattern
 	): Promise<ResolvedPattern> {
 		const choice = await promptCreateOrAppendToPattern();
-		if (choice == 1) {
+		if (choice === 1) {
 			return this.createNewPattern(unresolvedObject.transaction);
-		} else if (choice == 2) {
+		} else if (choice === 2) {
 			return this.appendToPattern(unresolvedObject.transaction);
-		} else throw new InvalidNumberChoiceError(1, 2);
+		} else throw new Error('unexpected choice value received');
 	}
+
 	async resolveAll(
 		unresolvedObjects: UnresolvedPattern[]
 	): Promise<ResolvedPattern[]> {
