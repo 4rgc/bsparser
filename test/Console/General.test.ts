@@ -24,25 +24,28 @@ describe('Console/General', () => {
 			});
 		});
 
-		test('should call prompt.get()', () => {
-			promptMultipleChoice('', 0);
-			process.stdout.write('');
+		beforeEach(() => {
+			mockOutput = 1;
+			mockStdout = '';
+		});
+
+		test('should call prompt.get()', async () => {
+			await promptMultipleChoice('', 1);
 			expect(prompt.get).toHaveBeenCalledTimes(1);
 		});
 
 		test('should return 1', async () => {
-			mockOutput = 1;
 			expect(await promptMultipleChoice('', 5)).toBe(1);
 		});
 
-		test('should print the message to the console', () => {
+		test('should print the message to the console', async () => {
 			const message = 'message';
-			promptMultipleChoice(message, 0);
+			await promptMultipleChoice(message, 1);
 			expect(mockStdout).toBe(message);
 		});
 
-		test('should pass a validator function to prompt.get()', () => {
-			promptMultipleChoice('', 2);
+		test('should pass a validator function to prompt.get()', async () => {
+			await promptMultipleChoice('', 2);
 			const conformFn = (
 				(promptSchema[0] as prompt.Schema).properties
 					?.choice as RevalidatorSchema
@@ -50,8 +53,8 @@ describe('Console/General', () => {
 			expect(conformFn).toBeFunction();
 		});
 
-		test('should pass a proper validator function to prompt.get()', () => {
-			promptMultipleChoice('', 2);
+		test('should pass a proper validator function to prompt.get()', async () => {
+			await promptMultipleChoice('', 2);
 			const conformFn = (
 				(promptSchema[0] as prompt.Schema).properties
 					?.choice as RevalidatorSchema
