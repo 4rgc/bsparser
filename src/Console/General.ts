@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import prompt from 'prompt';
+import { InvalidNumberChoiceError } from '../Utility/Errors';
 
 interface MultipleChoiceProps extends prompt.Properties {
 	choice: string;
@@ -34,7 +35,15 @@ export const promptMultipleChoice = async (
 	];
 
 	const res = await prompt.get<MultipleChoiceProps>(schema);
-	return Number.parseInt(res.choice);
+	const resNum = Number.parseFloat(res.choice);
+	if (
+		resNum < 1 ||
+		resNum > choiceNumber ||
+		isNaN(resNum) ||
+		!Number.isInteger(resNum)
+	)
+		throw new InvalidNumberChoiceError(1, choiceNumber);
+	return resNum;
 };
 
 export const promptConformingText = async (

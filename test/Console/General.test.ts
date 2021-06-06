@@ -1,8 +1,10 @@
 import prompt, { RevalidatorSchema } from 'prompt';
 import { promptMultipleChoice } from '../../src/Console/General';
+import { InvalidNumberChoiceError } from '../../src/Utility/Errors';
 
 describe('Console/General', () => {
 	describe('promptMultipleChoice()', () => {
+		let mockPromptGet: jest.SpyInstance;
 		let mockOutput: number;
 		let mockStdout: string;
 		let promptSchema: (
@@ -14,10 +16,12 @@ describe('Console/General', () => {
 
 		beforeAll(() => {
 			mockOutput = -1;
-			jest.spyOn(prompt, 'get').mockImplementation(async (schema) => {
-				promptSchema = schema;
-				return { choice: mockOutput };
-			});
+			mockPromptGet = jest
+				.spyOn(prompt, 'get')
+				.mockImplementation(async (schema) => {
+					promptSchema = schema;
+					return { choice: mockOutput };
+				});
 			// eslint-disable-next-line no-console
 			console.log = jest.fn((text) => {
 				mockStdout = text;
@@ -67,6 +71,25 @@ describe('Console/General', () => {
 			expect(conformFn?.('hello')).toBeFalse();
 			expect(conformFn?.('')).toBeFalse();
 			expect(conformFn?.('1.2345')).toBeFalse();
+		});
+
+		test('should throw on invalid value received from prompt.get()', async () => {
+			let val = '5000';
+			mockPromptGet.mockImplementation(() => ({ choice: val }));
+
+			await expect(() => promptMultipleChoice('', 2)).rejects.toThrow(
+				InvalidNumberChoiceError
+			);
+
+			val = 'halllooo';
+			await expect(() => promptMultipleChoice('', 2)).rejects.toThrow(
+				InvalidNumberChoiceError
+			);
+
+			val = '1.5';
+			await expect(() => promptMultipleChoice('', 2)).rejects.toThrow(
+				InvalidNumberChoiceError
+			);
 		});
 	});
 });
