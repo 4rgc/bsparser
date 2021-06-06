@@ -4,7 +4,7 @@ import PatternResolver, {
 	UnresolvedPattern,
 } from '../src/Patterns/PatternResolver';
 import { promptNewPattern, promptPatternKey } from '../src/Console/NewPattern';
-import { testPattern, testRawTransaction } from './testutils';
+import { testPattern, testPatterns, testRawTransaction } from './testutils';
 import PatternBank from '../src/Patterns/PatternBank';
 import Pattern from '../src/Patterns/Pattern';
 
@@ -98,6 +98,59 @@ describe('PatternResolver', () => {
 						new UnresolvedPattern(testRawTransaction)
 					)
 				).rejects.toThrow('patternToAppend was null');
+			});
+		});
+
+		describe('resolveAll()', () => {
+			let testUnresolvedPatterns: UnresolvedPattern[];
+
+			beforeAll(() => {
+				const resolveGenFun = function* lambda(): Generator<
+					ResolvedPattern,
+					void,
+					void
+				> {
+					for (const pattern of testPatterns) {
+						yield new ResolvedPattern(pattern);
+					}
+				};
+				let curGen = resolveGenFun();
+				jest.spyOn(PatternResolver, 'resolve').mockImplementation(
+					async () => {
+						const val = curGen.next().value;
+						if (val) return val;
+						else {
+							curGen = resolveGenFun();
+							return (
+								curGen.next().value ||
+								new ResolvedPattern(testPattern)
+							);
+						}
+					}
+				);
+			});
+
+			beforeEach(() => {
+				testUnresolvedPatterns = [
+					new UnresolvedPattern(testRawTransaction),
+					new UnresolvedPattern(testRawTransaction),
+					new UnresolvedPattern(testRawTransaction),
+				];
+			});
+
+			test('should return an array', async () => {
+				expect(
+					await PatternResolver.resolveAll(testUnresolvedPatterns)
+				).toBeArray();
+			});
+
+			test('should return an array with ResolvedPattern objects', async () => {
+				const result = await PatternResolver.resolveAll(
+					testUnresolvedPatterns
+				);
+
+				for (const el of result)
+					expect(el).toBeInstanceOf(ResolvedPattern);
 			});
 		});
 	});
