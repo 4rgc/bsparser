@@ -50,8 +50,12 @@ describe('PatternResolver', () => {
 		});
 
 		describe('append to pattern', () => {
+			let mockPromptCreateOrAppendToPattern: jest.Mock;
+
 			beforeAll(() => {
-				(promptCreateOrAppendToPattern as jest.Mock).mockReturnValue(2);
+				mockPromptCreateOrAppendToPattern = (
+					promptCreateOrAppendToPattern as jest.Mock
+				).mockReturnValue(2);
 				(PatternBank.findMatchingPatterns as jest.Mock).mockReturnValue(
 					[]
 				);
@@ -98,6 +102,33 @@ describe('PatternResolver', () => {
 						new UnresolvedPattern(testRawTransaction)
 					)
 				).rejects.toThrow('patternToAppend was null');
+			});
+
+			test('should throw "unexpected choice value received"', async () => {
+				let val = 5000;
+				mockPromptCreateOrAppendToPattern.mockImplementation(
+					async () => val
+				);
+
+				await expect(
+					PatternResolver.resolve(
+						new UnresolvedPattern(testRawTransaction)
+					)
+				).rejects.toThrow('unexpected choice value received');
+
+				val = -123;
+				await expect(
+					PatternResolver.resolve(
+						new UnresolvedPattern(testRawTransaction)
+					)
+				).rejects.toThrow('unexpected choice value received');
+
+				val = 1.2356;
+				await expect(
+					PatternResolver.resolve(
+						new UnresolvedPattern(testRawTransaction)
+					)
+				).rejects.toThrow('unexpected choice value received');
 			});
 		});
 
