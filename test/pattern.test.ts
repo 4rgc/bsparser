@@ -24,4 +24,18 @@ describe('Pattern', () => {
 			expect(pattern.key.filter((k) => k === newKey)).toBeArrayOfSize(1);
 		});
 	});
+
+	describe('clone()', () => {
+		test('should return a Pattern object', () => {
+			expect(pattern.clone()).toBeInstanceOf(Pattern);
+		});
+
+		test('should have same properties as the original object', () => {
+			expect(pattern.clone()).toEqual(pattern);
+		});
+
+		test('should be a different object from the original', () => {
+			expect(pattern.clone()).not.toBe(pattern);
+		});
+	});
 });
