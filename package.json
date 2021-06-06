@@ -7,8 +7,8 @@
     "dev": "tsc -w",
     "compile": "tsc",
     "start": "node ./dist",
-    "test": "jest ./test/*.test.ts",
-    "test-w": "jest ./test/*.test.ts --watchAll",
+    "test": "jest \"test/.*\"",
+    "test-w": "jest \"test/.*\" --watchAll",
     "coverage": "jest --coverage",
     "lint": "eslint . --ext .ts",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
