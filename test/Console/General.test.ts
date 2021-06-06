@@ -1,6 +1,5 @@
 import prompt, { RevalidatorSchema } from 'prompt';
 import { promptMultipleChoice } from '../../src/Console/General';
-import Pattern from '../../src/Patterns/Pattern';
 
 describe('Console/General', () => {
 	describe('promptMultipleChoice()', () => {
@@ -58,10 +57,13 @@ describe('Console/General', () => {
 					?.choice as RevalidatorSchema
 			).conform;
 
-			expect(conformFn?.(1)).toBeTrue();
-			expect(conformFn?.(2)).toBeTrue();
-			expect(conformFn?.(0)).toBeFalse();
-			expect(conformFn?.(3)).toBeFalse();
+			expect(conformFn?.('1')).toBeTrue();
+			expect(conformFn?.('2')).toBeTrue();
+			expect(conformFn?.('0')).toBeFalse();
+			expect(conformFn?.('3')).toBeFalse();
+			expect(conformFn?.('hello')).toBeFalse();
+			expect(conformFn?.('')).toBeFalse();
+			expect(conformFn?.('1.2345')).toBeFalse();
 		});
 	});
 });
