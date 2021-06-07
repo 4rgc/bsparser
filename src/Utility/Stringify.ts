@@ -1,14 +1,23 @@
 import { MeaningfulTransaction } from '../Transactions';
 import { FormatterError } from './Errors';
+import _ from 'lodash';
 
 const FormattersEnum = Object.freeze({
 	csv: (arr: unknown[]) =>
 		arr
 			.map((el) => {
-				return el
-					? typeof el === 'string' ||
-							(JSON.stringify(el).includes(',') ? `"${el}"` : el)
-					: '';
+				if (el) {
+					let ret;
+					if (typeof el === 'string') {
+						if (/[",]+/.test(el)) ret = el;
+						else return el;
+					} else if (/[",]+/.test(JSON.stringify(el)))
+						ret = JSON.stringify(el);
+					else return JSON.stringify(el);
+
+					return `"${_.replace(ret, /"/g, '""')}"`;
+				}
+				return el;
 			})
 			.join(','),
 	tsv: (arr: unknown[]) =>
