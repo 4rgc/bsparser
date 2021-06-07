@@ -54,7 +54,6 @@ describe('Stringify', () => {
 				expect(mt[MeaningfulTransactionOrder[contentsIdx]]).toBe(
 					testContents
 				);
-				console.log(splitCsvMt);
 				expect(splitCsvMt[contentsIdx]).toBe('The BRUH, store');
 			});
 
