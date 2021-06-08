@@ -8,7 +8,8 @@
     "compile": "tsc",
     "start": "node ./dist",
     "test": "jest \"test/.*\"",
-    "test-w": "jest \"test/.*\" --watchAll",
+    "jest-w": "jest \"test/.*\" --watchAll",
+    "cuc": "cucumber-js",
     "coverage": "jest --coverage",
     "lint": "eslint . --ext .ts",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
@@ -37,6 +38,7 @@
     "@babel/plugin-transform-runtime": "^7.14.3",
     "@babel/preset-env": "^7.14.2",
     "@babel/preset-typescript": "^7.13.0",
+    "@cucumber/cucumber": "^7.2.1",
     "@types/deep-equal": "^1.0.1",
     "@types/jest": "^26.0.23",
     "@types/lodash": "^4.14.170",
@@ -51,6 +53,7 @@
     "jest": "^26.6.3",
     "jest-extended": "^0.11.5",
     "prettier": "^2.3.0",
+    "robotjs": "^0.6.0",
     "ts-jest": "^26.5.6"
   }
 }
