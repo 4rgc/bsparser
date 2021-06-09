@@ -4,6 +4,7 @@ const fs = require('fs');
 const App = require('../../dist/src/App');
 const robot = require('robotjs');
 const moment = require('moment');
+const cmd = require('../cmd');
 
 const patterns = `[{"key":["DOMINOS PIZZA"],"Contents":"Dominos Pizza","Main Cat.":"食費","Sub Cat.":"配達","Inc./Exp.":"支出"},{"key":["AMZN","Amazon.com"],"Contents":"Amazon","Main Cat.":"買い物","Inc./Exp.":"支出"},{"key":["NETFLIX"],"Contents":"Netflix","Main Cat.":"娯楽","Inc./Exp.":"支出"},{"key":["SPOTIFY"],"Contents":"Spotify","Main Cat.":"娯楽","Inc./Exp.":"支出"},{"key":["CHEGG"],"Contents":"Chegg","Main Cat.":"習い事","Inc./Exp.":"支出"},{"key":["OSMOW'S"],"Contents":"Osmow’s","Main Cat.":"食費","Sub Cat.":"外食","Inc./Exp.":"支出"},{"key":["APPLE.COM"],"Contents":"Apple","Main Cat.":"買い物","Inc./Exp.":"支出"},{"key":["WAL-MART"],"Contents":"Walmart","Main Cat.":"食費","Inc./Exp.":"支出"},{"key":["UBER   * EATS"],"Contents":"Uber Eats","Main Cat.":"食費","Sub Cat.":"配達","Inc./Exp.":"支出"}]`;
 
@@ -54,10 +55,21 @@ Given('all patterns are recorded in `patterns.json`', function () {
 });
 
 When('I run the application with given parameters', function () {
-	const app = new App.default();
+	const run = cmd
+		.create('./dist/')
+		.execute(
+			[],
+			[
+				this.inputPath,
+				cmd.ENTER,
+				this.account,
+				cmd.ENTER,
+				this.dateLimit,
+				cmd.ENTER,
+			]
+		);
 
-	roboInputArr([this.inputPath, this.account, this.dateLimit], 100);
-	return Promise.resolve(app.run());
+	return run;
 });
 
 Then('I will get a tsv file in the same directory', function () {
