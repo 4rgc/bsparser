@@ -1,8 +1,15 @@
 import prompt, { RevalidatorSchema } from 'prompt';
-import { promptMultipleChoice } from '../../src/Console/General';
+import {
+	promptConformingText,
+	promptMultipleChoice,
+} from '../../src/Console/General';
 import { InvalidNumberChoiceError } from '../../src/Utility/Errors';
 
 describe('Console/General', () => {
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
+
 	describe('promptMultipleChoice()', () => {
 		let mockPromptGet: jest.SpyInstance;
 		let mockOutput: number;
@@ -57,21 +64,31 @@ describe('Console/General', () => {
 			expect(conformFn).toBeFunction();
 		});
 
-		test('should pass a proper validator function to prompt.get()', async () => {
-			await promptMultipleChoice('', 2);
-			const conformFn = (
-				(promptSchema[0] as prompt.Schema).properties
-					?.choice as RevalidatorSchema
-			).conform;
+		test.each(['1', '2'])(
+			'should validate the value and allow it',
+			async (inp) => {
+				await promptMultipleChoice('', 2);
+				const conformFn = (
+					(promptSchema[0] as prompt.Schema).properties
+						?.choice as RevalidatorSchema
+				).conform;
 
-			expect(conformFn?.('1')).toBeTrue();
-			expect(conformFn?.('2')).toBeTrue();
-			expect(conformFn?.('0')).toBeFalse();
-			expect(conformFn?.('3')).toBeFalse();
-			expect(conformFn?.('hello')).toBeFalse();
-			expect(conformFn?.('')).toBeFalse();
-			expect(conformFn?.('1.2345')).toBeFalse();
-		});
+				expect(conformFn?.(inp)).toBeTrue();
+			}
+		);
+
+		test.each(['0', '3', 'hello', '', '1.2345'])(
+			'should validate the value and reject it',
+			async (inp) => {
+				await promptMultipleChoice('', 2);
+				const conformFn = (
+					(promptSchema[0] as prompt.Schema).properties
+						?.choice as RevalidatorSchema
+				).conform;
+
+				expect(conformFn?.(inp)).toBeFalse();
+			}
+		);
 
 		test('should throw on invalid value received from prompt.get()', async () => {
 			let val = '5000';
@@ -90,6 +107,73 @@ describe('Console/General', () => {
 			await expect(() => promptMultipleChoice('', 2)).rejects.toThrow(
 				InvalidNumberChoiceError
 			);
+		});
+	});
+
+	describe('promptConformingText()', () => {
+		let mockOutput: string;
+		let mockStdout: string;
+		let promptSchema: (
+			| string
+			| number
+			| prompt.Schema
+			| prompt.RevalidatorSchema
+		)[];
+
+		beforeAll(() => {
+			mockOutput = 'out';
+			jest.spyOn(prompt, 'get').mockImplementation(async (schema) => {
+				promptSchema = schema;
+				return { text: mockOutput };
+			});
+			// eslint-disable-next-line no-console
+			console.log = jest.fn((text) => {
+				mockStdout = text;
+			});
+		});
+
+		beforeEach(() => {
+			mockOutput = 'out';
+			mockStdout = '';
+		});
+
+		test('should call prompt.get()', async () => {
+			await promptConformingText('msg', () => true, 'wrong');
+			expect(prompt.get).toHaveBeenCalledTimes(1);
+		});
+
+		test('should return `out`', async () => {
+			expect(await promptConformingText('msg', () => true, 'wrong')).toBe(
+				'out'
+			);
+		});
+
+		test.each(['text', '', '˚∆å¥∑ç˜åœ∆ß˚å˜≈˜'])(
+			'should return proper output',
+			async (s) => {
+				mockOutput = s;
+				expect(
+					await promptConformingText(mockOutput, () => true, 'wrong')
+				).toBe(mockOutput);
+			}
+		);
+
+		test('should print the message to the console', async () => {
+			const message = 'message';
+			await promptConformingText(message, () => true, 'wrong');
+			expect(mockStdout).toBe(message);
+		});
+
+		test('should pass the validator function forward to prompt.get()', async () => {
+			const conformExp = () => true;
+			await promptConformingText('msg', conformExp, 'wrong');
+			const conformAct = (
+				(promptSchema[0] as prompt.Schema).properties
+					?.text as RevalidatorSchema
+			).conform;
+
+			expect(conformAct).toBeFunction();
+			expect(conformAct).toBe(conformExp);
 		});
 	});
 });
