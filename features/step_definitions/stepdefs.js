@@ -2,7 +2,6 @@ const assert = require('assert');
 const { Given, When, Then } = require('@cucumber/cucumber');
 const fs = require('fs');
 const App = require('../../dist/src/App');
-const robot = require('robotjs');
 const moment = require('moment');
 const cmd = require('../cmd');
 
@@ -23,20 +22,6 @@ Date	Account	Main Cat.	Sub Cat.	Contents	Amount	Inc./Exp.	Details
 4/4/2021	デビットカード	習い事		Chegg	19.62	支出	
 4/9/2021	デビットカード	買い物		Apple	6.2	支出	
 `;
-
-const roboInput = (input) => {
-	robot.typeString(input);
-	robot.keyTap('enter');
-};
-const roboInputArr = (inputs, time) => {
-	let i = 0;
-	if (inputs.length === 0) return;
-	const interval = setInterval(() => {
-		roboInput(inputs[i]);
-		i++;
-		if (i === inputs.length) clearInterval(interval);
-	}, time);
-};
 
 Given("I'm using a debit account", function () {
 	this.account = '2';
