@@ -51,7 +51,8 @@ When('I run the application with given parameters', function () {
 				cmd.ENTER,
 				this.dateLimit,
 				cmd.ENTER,
-			]
+			],
+			{ timeout: 60 }
 		);
 
 	return run;
