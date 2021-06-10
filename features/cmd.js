@@ -23,9 +23,13 @@ function createProcess(processPath, args = [], env = null) {
 
 	args = [processPath].concat(args);
 
+	let command = 'node';
+
+	if (env && env.TS) command = 'ts-node';
+
 	// This works for node based CLIs, but can easily be adjusted to
 	// any other process installed in the system
-	return spawn('node', args, {
+	return spawn(command, args, {
 		env: Object.assign(
 			{
 				NODE_ENV: 'test',
@@ -53,7 +57,12 @@ function executeWithInput(processPath, args = [], inputs = [], opts = {}) {
 		inputs = [];
 	}
 
-	const { env = null, timeout = 100, maxTimeout = 10000 } = opts;
+	const {
+		env = null,
+		timeout = 100,
+		maxTimeout = 10000,
+		firstTimeout = 0,
+	} = opts;
 	const childProcess = createProcess(processPath, args, env);
 	childProcess.stdin.setEncoding('utf-8');
 
@@ -120,7 +129,9 @@ function executeWithInput(processPath, args = [], inputs = [], opts = {}) {
 		childProcess.on('error', reject);
 
 		// Kick off the process
-		loop(inputs);
+		currentInputTimeout = setTimeout(() => {
+			loop(inputs);
+		}, firstTimeout);
 
 		childProcess.stdout.pipe(
 			concat((result) => {
