@@ -1,6 +1,6 @@
 import moment from 'moment';
-import { ArgumentError } from '../src/Utility/Errors';
-import RawTransactionParser from '../src/Utility/RawTransactionParser';
+import { ArgumentError } from '../Utility/Errors';
+import RawTransactionParser from '../Utility/RawTransactionParser';
 import { testRawTransaction } from './testutils';
 
 describe('RawTransactionParser', () => {

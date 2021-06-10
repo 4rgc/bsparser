@@ -1,16 +1,16 @@
-import { promptCreateOrAppendToPattern } from '../src/Console/PatternResolution';
+import { promptCreateOrAppendToPattern } from '../Console/PatternResolution';
 import PatternResolver, {
 	ResolvedPattern,
 	UnresolvedPattern,
-} from '../src/Patterns/PatternResolver';
-import { promptNewPattern, promptPatternKey } from '../src/Console/NewPattern';
+} from '../Patterns/PatternResolver';
+import { promptNewPattern, promptPatternKey } from '../Console/NewPattern';
 import { testPattern, testPatterns, testRawTransaction } from './testutils';
-import PatternBank from '../src/Patterns/PatternBank';
-import Pattern from '../src/Patterns/Pattern';
+import PatternBank from '../Patterns/PatternBank';
+import Pattern from '../Patterns/Pattern';
 
-jest.mock('../src/Console/NewPattern');
-jest.mock('../src/Console/PatternResolution');
-jest.mock('../src/Patterns/PatternBank');
+jest.mock('../Console/NewPattern');
+jest.mock('../Console/PatternResolution');
+jest.mock('../Patterns/PatternBank');
 
 describe('PatternResolver', () => {
 	let pattern: Pattern = testPattern;

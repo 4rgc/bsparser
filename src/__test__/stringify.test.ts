@@ -1,10 +1,10 @@
-import { Stringify } from '../src/Utility/Stringify';
-import { MeaningfulTransaction } from '../src/Transactions';
+import { Stringify } from '../Utility/Stringify';
+import { MeaningfulTransaction } from '../Utility/Transactions';
 import {
 	testMeaningfulTransaction,
 	MeaningfulTransactionOrder,
 } from './testutils';
-import { FormatterError } from '../src/Utility/Errors';
+import { FormatterError } from '../Utility/Errors';
 import parse from 'csv-parse/lib/sync';
 
 describe('Stringify', () => {

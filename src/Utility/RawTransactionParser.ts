@@ -1,4 +1,4 @@
-import { RawTransaction } from '../Transactions';
+import { RawTransaction } from './Transactions';
 import { ArgumentError } from './Errors';
 import _ from 'lodash';
 

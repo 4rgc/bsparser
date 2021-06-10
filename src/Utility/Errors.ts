@@ -1,5 +1,5 @@
-import { RawTransaction } from '../Transactions';
-import { Pattern } from '../types';
+import { RawTransaction } from './Transactions';
+import { Pattern } from './types';
 
 export class MultipleMatchingPatternsFoundError extends Error {
 	constructor(

@@ -1,4 +1,4 @@
-import { RawTransaction } from '../Transactions';
+import { RawTransaction } from '../Utility/Transactions';
 import { promptNewPattern, promptPatternKey } from '../Console/NewPattern';
 import {
 	promptAppendPatternChoice,

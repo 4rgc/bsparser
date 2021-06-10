@@ -1,4 +1,4 @@
-import { Pattern } from '../types';
+import { Pattern } from '../Utility/types';
 import { promptMultipleChoice } from './General';
 
 export const promptResolvePatternOrSkipTransaction = (): Promise<number> => {

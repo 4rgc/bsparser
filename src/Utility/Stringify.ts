@@ -1,4 +1,4 @@
-import { MeaningfulTransaction } from '../Transactions';
+import { MeaningfulTransaction } from './Transactions';
 import { FormatterError } from './Errors';
 import _ from 'lodash';
 

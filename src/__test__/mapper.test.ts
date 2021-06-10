@@ -1,12 +1,12 @@
-import Mapper from '../src/Utility/Mapper';
-import { MeaningfulTransaction } from '../src/Transactions';
+import Mapper from '../Utility/Mapper';
+import { MeaningfulTransaction } from '../Utility/Transactions';
 import { testPattern, testRawTransaction } from './testutils';
-import patterns from '../src/Patterns/PatternBank';
+import patterns from '../Patterns/PatternBank';
 import {
 	ResolvedPattern,
 	UnresolvedPattern,
-} from '../src/Patterns/PatternResolver';
-import { MultipleMatchingPatternsFoundError } from '../src/Utility/Errors';
+} from '../Patterns/PatternResolver';
+import { MultipleMatchingPatternsFoundError } from '../Utility/Errors';
 
 describe('Mapper', () => {
 	describe('MeaningfulTransactionFromRawTransaction()', () => {

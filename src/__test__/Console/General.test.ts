@@ -2,8 +2,8 @@ import prompt, { RevalidatorSchema } from 'prompt';
 import {
 	promptConformingText,
 	promptMultipleChoice,
-} from '../../src/Console/General';
-import { InvalidNumberChoiceError } from '../../src/Utility/Errors';
+} from '../../Console/General';
+import { InvalidNumberChoiceError } from '../../Utility/Errors';
 
 describe('Console/General', () => {
 	afterEach(() => {

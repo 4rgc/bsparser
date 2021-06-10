@@ -1,5 +1,5 @@
-import { MeaningfulTransaction, RawTransaction } from '../Transactions';
-import { Pattern } from '../types';
+import { MeaningfulTransaction, RawTransaction } from './Transactions';
+import { Pattern } from './types';
 import patterns from '../Patterns/PatternBank';
 import {
 	ResolvedPattern,

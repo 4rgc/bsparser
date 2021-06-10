@@ -1,11 +1,13 @@
-import PatternBank from '../src/Patterns/PatternBank';
-import { readFileAsText } from '../src/util';
+import PatternBank from '../Patterns/PatternBank';
 import fs from 'fs';
 import { testPatterns } from './testutils';
 import equal from 'deep-equal';
-import Pattern from '../src/Patterns/Pattern';
-
-jest.mock('../src/util');
+import Pattern from '../Patterns/Pattern';
+import { readFileAsText } from '../Utility/util';
+jest.mock('../Utility/util', () => ({
+	...jest.requireActual('../Utility/util'),
+	readFileAsText: jest.fn(),
+}));
 
 describe('PatternBank', () => {
 	const origPatternBank = PatternBank;

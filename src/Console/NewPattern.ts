@@ -1,5 +1,5 @@
-import { RawTransaction } from '../Transactions';
-import { Category } from '../types';
+import { RawTransaction } from '../Utility/Transactions';
+import { Category } from '../Utility/types';
 import Pattern from '../Patterns/Pattern';
 import { promptConformingText, promptMultipleChoice } from './General';
 

@@ -1,4 +1,4 @@
-import Pattern from '../src/Patterns/Pattern';
+import Pattern from '../Patterns/Pattern';
 import { testPattern } from './testutils';
 
 describe('Pattern', () => {

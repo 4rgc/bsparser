@@ -1,5 +1,5 @@
-import Pattern from '../src/Patterns/Pattern';
-import { RawTransaction, MeaningfulTransaction } from '../src/Transactions';
+import Pattern from '../Patterns/Pattern';
+import { RawTransaction, MeaningfulTransaction } from '../Utility/Transactions';
 
 const testPattern = Object.assign(new Pattern(), {
 	key: ['A', 'B'],

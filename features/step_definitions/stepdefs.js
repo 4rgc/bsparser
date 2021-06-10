@@ -1,7 +1,6 @@
 const assert = require('assert');
 const { Given, When, Then } = require('@cucumber/cucumber');
 const fs = require('fs');
-const App = require('../../dist/src/App');
 const moment = require('moment');
 const cmd = require('../cmd');
 
@@ -32,7 +31,7 @@ Given('I want to include all transactions', function () {
 });
 
 Given('I provide a valid csv file path', function () {
-	this.inputPath = 'test/transactions.csv';
+	this.inputPath = 'src/__test__/transactions.csv';
 });
 
 Given('all patterns are recorded in `patterns.json`', function () {
@@ -52,7 +51,7 @@ When('I run the application with given parameters', function () {
 				this.dateLimit,
 				cmd.ENTER,
 			],
-			{ timeout: 60 }
+			{ timeout: 80 }
 		);
 
 	return run;

@@ -1,11 +1,11 @@
 import fs from 'fs';
-import { MeaningfulTransaction, RawTransaction } from './Transactions';
+import { MeaningfulTransaction, RawTransaction } from './Utility/Transactions';
 import PatternBank from './Patterns/PatternBank';
-import { readFileAsText } from './util';
+import { readFileAsText } from './Utility/util';
 import moment from 'moment';
 import { promptSettings, SettingsProps } from './Console/Settings';
 import Mapper from './Utility/Mapper';
-import { Pattern } from './types';
+import { Pattern } from './Utility/types';
 import PatternResolver, {
 	ResolvedPattern,
 	UnresolvedPattern,

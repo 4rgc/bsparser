@@ -1,4 +1,4 @@
-import App from './src/App';
+import App from './ConsoleApp';
 
 const app = new App();
 

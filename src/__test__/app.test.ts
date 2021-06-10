@@ -1,5 +1,5 @@
-import App from '../src/App';
-import { Stringify } from '../src/Utility/Stringify';
+import App from '../ConsoleApp';
+import { Stringify } from '../Utility/Stringify';
 import { testMeaningfulTransaction, testPatterns } from './testutils';
 
 describe('App', () => {
