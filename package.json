@@ -27,7 +27,7 @@
   "dependencies": {
     "@babel/runtime": "^7.14.0",
     "chalk": "^4.1.1",
-    "csv": "^5.5.0",
+    "csv": "^5.5.3",
     "jszip": "^3.6.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
@@ -41,6 +41,7 @@
     "@cucumber/cucumber": "^7.2.1",
     "@types/concat-stream": "^1.6.0",
     "@types/cross-spawn": "^6.0.2",
+    "@types/csv-parse": "^1.2.2",
     "@types/deep-equal": "^1.0.1",
     "@types/jest": "^26.0.23",
     "@types/lodash": "^4.14.170",
