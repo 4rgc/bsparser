@@ -1,20 +1,10 @@
 import { RawTransaction } from '../Transactions';
 import { ArgumentError } from './Errors';
-import _ from 'lodash';
+import parseCSV from 'csv-parse/lib/sync';
 
 const FormattersEnum = Object.freeze({
 	csv: (row: string): string[] => {
-		return row
-			.split(',')
-			.map((el) =>
-				typeof el === 'string' && el.charAt(0) === '"'
-					? _.replace(
-							el.substring(1, el.length - 1),
-							new RegExp('""', 'g'),
-							'"'
-					  )
-					: el
-			);
+		return parseCSV(row).shift();
 	},
 	tsv: (row: string): string[] => {
 		return row.split('\t');
@@ -46,7 +36,7 @@ export default class RawTransactionParser {
 			throw new ArgumentError('must be a valid date following MM/DD/YY');
 
 		if (isNaN(Number.parseFloat(props[2])))
-			throw new ArgumentError('must be a valid number');
+			throw new ArgumentError(`must be a valid number: ${props}`);
 
 		const transaction = {
 			date: props[0],
