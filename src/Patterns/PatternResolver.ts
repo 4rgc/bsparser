@@ -3,6 +3,7 @@ import { promptNewPattern, promptPatternKey } from '../Console/NewPattern';
 import {
 	promptAppendPatternChoice,
 	promptCreateOrAppendToPattern,
+	promptResolvePatternOrSkipTransaction,
 } from '../Console/PatternResolution';
 import Pattern from './Pattern';
 import { IResolver, IResolved, IUnresolved } from '../Interfaces/IResolver';
@@ -53,6 +54,19 @@ class PatternResolver
 		} else throw new Error('unexpected choice value received');
 	}
 
+	async promptAndResolve(
+		unresolvedObject: UnresolvedPattern
+	): Promise<ResolvedPattern | null> {
+		const choice = await promptResolvePatternOrSkipTransaction(
+			unresolvedObject.transaction.desc
+		);
+		if (choice === 1) {
+			return this.resolve(unresolvedObject);
+		} else if (choice === 2) {
+			return null;
+		} else throw new Error('unexpected choice value received');
+	}
+
 	async resolveAll(
 		unresolvedObjects: UnresolvedPattern[]
 	): Promise<ResolvedPattern[]> {
@@ -60,6 +74,26 @@ class PatternResolver
 
 		for (const obj of unresolvedObjects) {
 			resolvedPatterns.push(await this.resolve(obj));
+		}
+
+		return resolvedPatterns;
+	}
+
+	async promptAndResolveAll(
+		unresolvedObjects: UnresolvedPattern[]
+	): Promise<ResolvedPattern[]> {
+		const resolvedPatterns: ResolvedPattern[] = [];
+
+		for (const obj of unresolvedObjects) {
+			const choice = await promptResolvePatternOrSkipTransaction(
+				obj.transaction.desc
+			);
+
+			if (choice === 1) {
+				resolvedPatterns.push(await this.resolve(obj));
+			} else if (choice !== 2) {
+				throw new Error('unexpected choice value received');
+			}
 		}
 
 		return resolvedPatterns;
