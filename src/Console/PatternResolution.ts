@@ -1,10 +1,14 @@
+import { RawTransaction } from '../Transactions';
 import { Pattern } from '../types';
 import { promptMultipleChoice } from './General';
 
-export const promptResolvePatternOrSkipTransaction = (): Promise<number> => {
+export const promptResolvePatternOrSkipTransaction = (
+	pattern: RawTransaction['desc']
+): Promise<number> => {
 	const msg = `A new pattern was found. Would you like to add it or skip the transaction?\
                 \n1 - Add \
-                \n2 - Skip`;
+                \n2 - Skip \
+				\nNew pattern: ${pattern}`;
 
 	return promptMultipleChoice(msg, 2);
 };
