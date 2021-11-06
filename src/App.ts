@@ -46,10 +46,9 @@ class App {
 			for (const k of Array.from(mappedPatterns.keys())) {
 				const pattern = mappedPatterns.get(k);
 				if (pattern instanceof UnresolvedPattern) {
-					mappedPatterns.set(
-						k,
-						await PatternResolver.resolve(pattern)
-					);
+					const resolvedPattern =
+						await PatternResolver.promptAndResolve(pattern);
+					if (resolvedPattern) mappedPatterns.set(k, resolvedPattern);
 				}
 			}
 			const meaningfulTransactions =
